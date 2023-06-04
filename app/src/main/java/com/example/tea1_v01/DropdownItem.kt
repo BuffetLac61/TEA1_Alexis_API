@@ -44,6 +44,7 @@ class DropdownAdapter(private var items: List<DropdownItem>) : RecyclerView.Adap
                 val context = itemView.context
                 val intent = Intent(context, ShowListActivity::class.java)
                 intent.putExtra("selectedItem", adapterPosition)
+                context.startActivity(intent) // Lancer l'intention pour ouvrir ShowListActivity
             }}
     }
 }
