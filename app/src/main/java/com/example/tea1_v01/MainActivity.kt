@@ -10,24 +10,28 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.preference.PreferenceManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-class MainActivity : BaseActivity() {
+
+class MainActivity : BaseActivity(),interfaceSharedPref {
 
     private lateinit var toolbar: Toolbar
     private lateinit var editTextPseudo: EditText
     private lateinit var buttonOk: Button
-    private val pseudoList: ArrayList<String> = ArrayList()
+    private var pseudoList: ArrayList<String> = ArrayList()
     private lateinit var currentPseudo :String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
-
-        loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
-
 
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
@@ -38,6 +42,8 @@ class MainActivity : BaseActivity() {
             val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
 
             if(pseudo!="") { //on vérifie qu'il y ai bien un nom rentré
+
+                loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
 
                 if (pseudoList.contains(pseudo)) {
                     currentPseudo = pseudo
@@ -104,6 +110,16 @@ class MainActivity : BaseActivity() {
             pseudoList.addAll(pseudoSet)
         }
     }
+
+    fun emptyPseudoListInSharedPreferences(){
+        Toast.makeText(this, "fonction appelee", Toast.LENGTH_SHORT).show()
+
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+    }
+
 
 }
 

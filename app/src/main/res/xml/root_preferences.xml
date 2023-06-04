@@ -6,7 +6,6 @@
             app:key="deletePseudoList"
             app:title="Delete pseudo history"
             app:summary="Remove all previously entered,\nThis action is NOT reversible">
-
         </Preference>
 
 
