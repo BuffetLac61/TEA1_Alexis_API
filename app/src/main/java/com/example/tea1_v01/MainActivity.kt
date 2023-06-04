@@ -1,5 +1,6 @@
 package com.example.tea1_v01
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,16 +8,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var toolbar: Toolbar
     private lateinit var editTextPseudo: EditText
     private lateinit var buttonOk: Button
     private val pseudoList: ArrayList<String> = ArrayList()
-
+    private lateinit var currentPseudo :String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,26 +25,47 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
-        supportActionBar?.apply {
-            //setDisplayHomeAsUpEnabled(true)
-            //setHomeAsUpIndicator(R.drawable.settings_account_box_fill0_wght400_grad0_opsz48)
-        }
+        loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
+
+
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
         buttonOk = findViewById(R.id.buttonOk)
 
         buttonOk.setOnClickListener {
-            val pseudo = editTextPseudo.text.toString()
-            pseudoList.add(pseudo)
-            editTextPseudo.clearComposingText()
+            //actions à effectuer quand on appuye sur OK
+            val pseudo =
+                editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
+
+            if (pseudoList.contains(pseudo)) {
+                currentPseudo = pseudo
+            }
+            else{
+                pseudoList.add(pseudo) //on ajoute le pseudo dans la liste
+                currentPseudo = pseudo
+            }
+
+            //editTextPseudo.clearComposingText() //on efface le pseudo ? (ne fonctionne pas)
+
             // Faire quelque chose avec le pseudo, par exemple l'afficher dans le Logcat
             Log.d("MainActivity", "Pseudo: $pseudo")
+
+            savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
+            Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
+
+
+            //puis ouvrir l'activité ChoixListActivity
+            val intent = Intent(this, ChoixListActivity::class.java)
+            Log.i("PMR", "[OPENED]ChoixListActivity")
+
+            startActivity(intent)
+
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        //création de la toolbar à partir de menu_main.xml
         menuInflater.inflate(R.menu.menu_main, menu)
-
 
         return true
     }
@@ -58,8 +79,27 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun savePseudoListToSharedPreferences() {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val pseudoSet = HashSet(pseudoList)
+        editor.putStringSet("pseudoList", pseudoSet)
+        editor.apply()
+    }
+
+    private fun loadPseudoListFromSharedPreferences() {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val pseudoSet = sharedPreferences.getStringSet("pseudoList", HashSet<String>())
+        pseudoList.clear()
+        if (pseudoSet != null) {
+            pseudoList.addAll(pseudoSet)
+        }
+    }
+
 }
+
