@@ -60,7 +60,7 @@ class MainActivity : BaseActivity() {
                 Log.i("PMR", "[OPENED]ChoixListActivity")
 
                 startActivity(intent)
-            }
+            } //si l'utilisateur ne rentre pas de pseudo
 
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo", Toast.LENGTH_SHORT).show()
 
