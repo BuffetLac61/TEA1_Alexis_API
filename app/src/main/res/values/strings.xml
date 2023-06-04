@@ -1,3 +1,5 @@
-<resources>
-    <string name="app_name">TEA1_V0.1</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="Typos">TEA1_V0.1</string>
+    <string name="pseudo">Pseudo</string>
+    <string name="ok">OK</string>
 </resources>
