@@ -10,12 +10,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.preference.PreferenceManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 
-class MainActivity : BaseActivity(),interfaceSharedPref {
+class MainActivity : BaseActivity() {
 
     private lateinit var toolbar: Toolbar
     private lateinit var editTextPseudo: EditText
@@ -60,6 +57,7 @@ class MainActivity : BaseActivity(),interfaceSharedPref {
                 savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
                 Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
 
+                editTextPseudo.hint = pseudo
 
                 //puis ouvrir l'activité ChoixListActivity
                 val intent = Intent(this, ChoixListActivity::class.java)
@@ -109,15 +107,6 @@ class MainActivity : BaseActivity(),interfaceSharedPref {
         if (pseudoSet != null) {
             pseudoList.addAll(pseudoSet)
         }
-    }
-
-    fun emptyPseudoListInSharedPreferences(){
-        Toast.makeText(this, "fonction appelee", Toast.LENGTH_SHORT).show()
-
-        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
     }
 
 
