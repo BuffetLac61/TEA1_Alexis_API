@@ -44,6 +44,7 @@ class MainActivity : BaseActivity() {
 
                 if (pseudoList.contains(pseudo)) {
                     currentPseudo = pseudo
+                    val profil = ProfilListeToDo(pseudo)
                 } else {
                     pseudoList.add(pseudo) //on ajoute le pseudo dans la liste
                     currentPseudo = pseudo

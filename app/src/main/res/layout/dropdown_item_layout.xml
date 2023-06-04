@@ -1,0 +1,45 @@
+<!-- dropdown_item_layout.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Conteneur principal avec une élévation pour l'ombre -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:elevation="2dp">
+
+        <!-- Icône à gauche -->
+        <ImageView
+            android:id="@+id/itemIconImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/baseline_checklist_24"
+            android:padding="12dp"
+            android:contentDescription="@string/todo" />
+
+        <!-- Titre de l'élément -->
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="Liste 1"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:paddingStart="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"/>
+
+    </LinearLayout>
+
+    <!-- Séparateur -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_color"/>
+
+</LinearLayout>
