@@ -27,7 +27,7 @@ class ChoixListActivity : BaseActivity() {
         val pseudoActif = intent.getStringExtra("pseudoActif")
 
         nomPseudoActif = findViewById(R.id.nomProfilActif)
-        nomPseudoActif.text = pseudoActif
+        nomPseudoActif.text = "Profil : "+pseudoActif
 
 
 
@@ -41,7 +41,6 @@ class ChoixListActivity : BaseActivity() {
 
         val adapter = DropdownAdapter(dropdownItems)
         recyclerView.adapter = adapter
-
 
     }
 
