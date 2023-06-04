@@ -29,9 +29,6 @@ class ProfilListeToDo {
     }
 
     fun ajouterListe(uneListe: ListeToDo?) {
-        if (mesListeToDo == null) {
-            mesListeToDo = ArrayList()
-        }
         if (uneListe != null) {
             mesListeToDo.add(uneListe)
         }
@@ -41,7 +38,7 @@ class ProfilListeToDo {
         return "ProfilListeToDo(login='$login', mesListeToDo=$mesListeToDo)"
     }
 
-    
+
 
 }
 
