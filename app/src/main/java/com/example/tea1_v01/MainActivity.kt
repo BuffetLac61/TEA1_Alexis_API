@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 
 class MainActivity : BaseActivity() {
@@ -34,31 +35,34 @@ class MainActivity : BaseActivity() {
 
         buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
-            val pseudo =
-                editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
+            val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
 
-            if (pseudoList.contains(pseudo)) {
-                currentPseudo = pseudo
+            if(pseudo!="") { //on vérifie qu'il y ai bien un nom rentré
+
+                if (pseudoList.contains(pseudo)) {
+                    currentPseudo = pseudo
+                } else {
+                    pseudoList.add(pseudo) //on ajoute le pseudo dans la liste
+                    currentPseudo = pseudo
+                }
+
+                //editTextPseudo.clearComposingText() //on efface le pseudo ? (ne fonctionne pas)
+
+                // Faire quelque chose avec le pseudo, par exemple l'afficher dans le Logcat
+                Log.d("MainActivity", "Pseudo: $pseudo")
+
+                savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
+                Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
+
+
+                //puis ouvrir l'activité ChoixListActivity
+                val intent = Intent(this, ChoixListActivity::class.java)
+                Log.i("PMR", "[OPENED]ChoixListActivity")
+
+                startActivity(intent)
             }
-            else{
-                pseudoList.add(pseudo) //on ajoute le pseudo dans la liste
-                currentPseudo = pseudo
-            }
 
-            //editTextPseudo.clearComposingText() //on efface le pseudo ? (ne fonctionne pas)
-
-            // Faire quelque chose avec le pseudo, par exemple l'afficher dans le Logcat
-            Log.d("MainActivity", "Pseudo: $pseudo")
-
-            savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
-            Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
-
-
-            //puis ouvrir l'activité ChoixListActivity
-            val intent = Intent(this, ChoixListActivity::class.java)
-            Log.i("PMR", "[OPENED]ChoixListActivity")
-
-            startActivity(intent)
+            else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo", Toast.LENGTH_SHORT).show()
 
         }
     }
