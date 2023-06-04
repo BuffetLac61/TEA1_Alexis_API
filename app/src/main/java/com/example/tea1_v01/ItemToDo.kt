@@ -28,7 +28,7 @@ class ItemToDo {
     }
 
     override fun toString(): String {
-        return "ItemToDo(description='$description', fait=$fait)"
+        return "'$description' : fait=$fait)"
     }
 }
 

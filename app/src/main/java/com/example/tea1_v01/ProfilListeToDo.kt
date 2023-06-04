@@ -4,11 +4,11 @@ package com.example.tea1_v01
 class ProfilListeToDo {
     var login: String? = null
         private set
-    private lateinit var mesListeToDo: MutableList<ListeToDo>
+    private var mesListeToDo: MutableList<ListeToDo> = arrayListOf()
 
 
     constructor(login: String?) {
-        // Constructeur par défaut
+        this.login=login
     }
 
     constructor(login: String?, mesListeToDo: MutableList<ListeToDo>?) {
@@ -28,6 +28,10 @@ class ProfilListeToDo {
         }
     }
 
+    fun getMesListesToDo(): MutableList<ListeToDo> {
+        return mesListeToDo
+    }
+
     fun ajouterListe(uneListe: ListeToDo?) {
         if (uneListe != null) {
             mesListeToDo.add(uneListe)
@@ -35,9 +39,13 @@ class ProfilListeToDo {
     }
 
     override fun toString(): String {
-        return "ProfilListeToDo(login='$login', mesListeToDo=$mesListeToDo)"
-    }
+        var chaineAffichee : String ="############### $login ###########"
+        for (listei in this.mesListeToDo){
+            chaineAffichee = chaineAffichee +"\n\t"+ listei.toString()
+        }
 
+        return (chaineAffichee+ "\n")
+    }
 
 
 }

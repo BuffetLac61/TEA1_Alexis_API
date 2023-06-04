@@ -31,6 +31,11 @@ class ListeToDo {
     }
 
     override fun toString(): String {
-        return "ListeToDo(titreListeToDo='$titreListeToDo', lesItems=${lesItems.contentToString()})"
+        var chaineAffichee : String ="###### $titreListeToDo ######"
+        for (itemi in this.getLesItems()){
+            chaineAffichee = chaineAffichee +"\n\t"+ itemi.toString()
+        }
+
+        return chaineAffichee+ "\n"
     }
 }
