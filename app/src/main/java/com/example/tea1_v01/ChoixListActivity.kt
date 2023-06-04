@@ -62,7 +62,7 @@ class ChoixListActivity : BaseActivity() {
         profilListeToDo1 = ajouterListe_test(pseudoActif)
         profilListeToDo2 = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
 
-        val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2)
+        val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2,pseudoActif)
 
         var adapter = DropdownAdapter(dropdownItems)
         recyclerView.adapter = adapter
@@ -92,7 +92,7 @@ class ChoixListActivity : BaseActivity() {
 
                 profilListeToDo2 = profilActif
 
-                val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2)
+                val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2,pseudoActif)
                 adapter.updateData(dropdownItems)
                 adapter.notifyDataSetChanged()
 
@@ -128,11 +128,11 @@ class ChoixListActivity : BaseActivity() {
         }
     }
 
-    fun fromListToDoToDropDownItem(profilListeToDo1: ProfilListeToDo) : List<DropdownItem>{
+    fun fromListToDoToDropDownItem(profilListeToDo1: ProfilListeToDo,pseudoActif:String) : List<DropdownItem>{
         val i = 1
         val dropdownItems = mutableListOf<DropdownItem>()
         for(listei in profilListeToDo1.getMesListesToDo()){
-            dropdownItems.add(DropdownItem(i,listei.getTitreListeToDo()))
+            dropdownItems.add(DropdownItem(i,listei.getTitreListeToDo(), pseudoActif))
         }
         return(dropdownItems)
     }

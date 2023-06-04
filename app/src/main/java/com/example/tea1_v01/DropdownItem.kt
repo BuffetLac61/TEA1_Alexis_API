@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-data class DropdownItem(val id: Int, val name: String) {
+data class DropdownItem(val id: Int, val name: String,val pseudoActif:String) {
 }
 
 
 class DropdownAdapter(private var items: List<DropdownItem>) : RecyclerView.Adapter<DropdownAdapter.ViewHolder>() {
-    var profilListeToDo: ProfilListeToDo? = null
 
     fun updateData(newItems: List<DropdownItem>) {
         items = newItems
@@ -43,6 +42,7 @@ class DropdownAdapter(private var items: List<DropdownItem>) : RecyclerView.Adap
             itemView.setOnClickListener {
                 val context = itemView.context
                 val intent = Intent(context, ShowListActivity::class.java)
+                intent.putExtra("pseudoActif", item.pseudoActif)
                 intent.putExtra("selectedItem", adapterPosition)
                 context.startActivity(intent) // Lancer l'intention pour ouvrir ShowListActivity
             }}
