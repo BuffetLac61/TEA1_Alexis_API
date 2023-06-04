@@ -18,10 +18,9 @@ class ChoixListActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
-        supportActionBar?.apply {
-            //setDisplayHomeAsUpEnabled(true)
-            //setHomeAsUpIndicator(R.drawable.settings_account_box_fill0_wght400_grad0_opsz48)
-        }
+
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -35,6 +34,7 @@ class ChoixListActivity : BaseActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 // Action à effectuer lorsque le bouton des paramètres est cliqué
+                finish()
                 val intent = Intent(this, SettingsActivity::class.java)
                 Log.i("PMR", "[OPENED]SettingsActivity")
                 startActivity(intent)
