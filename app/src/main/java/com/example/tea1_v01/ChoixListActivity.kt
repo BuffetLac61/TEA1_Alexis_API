@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 
 class ChoixListActivity : BaseActivity() {
 
+    private lateinit var nomPseudoActif: TextView
     private lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +20,11 @@ class ChoixListActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
+        val intent = intent
+        val pseudoActif = intent.getStringExtra("pseudoActif")
+
+        nomPseudoActif = findViewById(R.id.nomProfilActif)
+        nomPseudoActif.text = pseudoActif
 
 
 

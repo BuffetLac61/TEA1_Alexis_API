@@ -19,5 +19,15 @@
 
         app:layout_constraintBaseline_toTopOf="parent"/>
 
+    <TextView
+        android:id="@+id/nomProfilActif"
+        android:layout_width="match_parent"
+        android:text=""
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbarParametres">
+
+    </TextView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

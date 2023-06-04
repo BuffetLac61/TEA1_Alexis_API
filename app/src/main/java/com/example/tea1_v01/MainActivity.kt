@@ -61,6 +61,7 @@ class MainActivity : BaseActivity() {
 
                 //puis ouvrir l'activité ChoixListActivity
                 val intent = Intent(this, ChoixListActivity::class.java)
+                intent.putExtra("pseudoActif", pseudo)
                 Log.i("PMR", "[OPENED]ChoixListActivity")
 
                 startActivity(intent)
