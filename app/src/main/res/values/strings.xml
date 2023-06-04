@@ -2,5 +2,22 @@
     <string name="app_name" tools:ignore="Typos">TEA1_V0.1</string>
     <string name="pseudo">Pseudo</string>
     <string name="ok">OK</string>
-    <string name="listeDePseudo">Pseudo</string> />
+    <string name="listeDePseudo">Pseudo</string>
+    <string name="title_activity_settings2">SettingsActivity2</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Pseudo</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    />
 </resources>

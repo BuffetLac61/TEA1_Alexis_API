@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        app:titleTextColor="@color/cardview_light_background"
         app:title="MainActivity"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:contentInsetEnd="16dp"
