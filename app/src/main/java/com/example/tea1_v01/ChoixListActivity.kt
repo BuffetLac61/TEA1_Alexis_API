@@ -1,5 +1,6 @@
 package com.example.tea1_v01
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,11 +11,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tea1_v01.ListeToDo
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class ChoixListActivity : BaseActivity() {
 
     private lateinit var nomPseudoActif: TextView
     private lateinit var toolbar: Toolbar
+    lateinit var profilListeToDo1 : ProfilListeToDo
+    lateinit var profilListeToDo2 : ProfilListeToDo
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,14 +43,17 @@ class ChoixListActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
 
-        var profilListeToDo1 = ajouterListe_test(pseudoActif)
+        profilListeToDo1 = ajouterListe_test(pseudoActif)
+        profilListeToDo2 = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
 
-        val dropdownItems = fromListToDoToDropDownItem(profilListeToDo1)
+        val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2)
 
         val adapter = DropdownAdapter(dropdownItems)
         recyclerView.adapter = adapter
 
     }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -120,5 +131,31 @@ class ChoixListActivity : BaseActivity() {
         return(profil)
 
     }
+
+
+    // Enregistrer une liste de ProfilListeToDo dans les préférences partagées
+    fun saveProfilListeToDoList(profilListeToDoList: MutableList<ProfilListeToDo>) {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = gson.toJson(profilListeToDoList)
+        val editor = sharedPreferences.edit()
+        editor.putString("profilListeToDoList", json)
+        editor.apply()
+    }
+
+    // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
+    fun getProfilListeToDoList(): MutableList<ProfilListeToDo> {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("profilListeToDoList", "")
+        val type = object : TypeToken<MutableList<ProfilListeToDo>>() {}.type
+        return gson.fromJson(json, type) ?: mutableListOf()
+    }
+
+    //fonction qui prend en paramètre une liste de ProfilListeToDo ainsi qu'un login, et renvoie la ProfilListeToDo qui correspond au login
+    fun findProfilListeToDoByLogin(profilListeToDoList: List<ProfilListeToDo>, login: String): ProfilListeToDo? {
+        return profilListeToDoList.find { it.login == login }
+    }
+
 
 }

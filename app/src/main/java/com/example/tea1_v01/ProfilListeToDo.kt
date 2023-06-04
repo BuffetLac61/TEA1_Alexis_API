@@ -1,5 +1,7 @@
 package com.example.tea1_v01
 
+import android.os.Parcel
+
 
 class ProfilListeToDo {
     var login: String? = null
@@ -11,12 +13,13 @@ class ProfilListeToDo {
         this.login=login
     }
 
-    constructor(login: String?, mesListeToDo: MutableList<ListeToDo>?) {
+    constructor(login: String?, mesListeToDo: MutableList<ListeToDo>) {
         this.login = login
         if (mesListeToDo != null) {
             this.mesListeToDo = mesListeToDo
         }
     }
+
 
     private fun getMesListeToDo(): List<ListeToDo?>? {
         return this.mesListeToDo
@@ -37,9 +40,12 @@ class ProfilListeToDo {
             mesListeToDo.add(uneListe)
         }
     }
+    fun getlogin() : String?{
+        return this.login
+    }
 
     override fun toString(): String {
-        var chaineAffichee : String ="############### $login ###########"
+        var chaineAffichee : String ="$login"
         for (listei in this.mesListeToDo){
             chaineAffichee = chaineAffichee +"\n\t"+ listei.toString()
         }

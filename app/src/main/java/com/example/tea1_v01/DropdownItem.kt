@@ -13,7 +13,7 @@ data class DropdownItem(val id: Int, val name: String) {
 
 
 class DropdownAdapter(private val items: List<DropdownItem>) : RecyclerView.Adapter<DropdownAdapter.ViewHolder>() {
-
+    var profilListeToDo: ProfilListeToDo? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.dropdown_item_layout, parent, false)
         return ViewHolder(view)
@@ -38,9 +38,7 @@ class DropdownAdapter(private val items: List<DropdownItem>) : RecyclerView.Adap
                 val context = itemView.context
                 val intent = Intent(context, ShowListActivity::class.java)
                 intent.putExtra("selectedItem", adapterPosition)
-                context.startActivity(intent)
-            }
-        }
+            }}
     }
 }
 

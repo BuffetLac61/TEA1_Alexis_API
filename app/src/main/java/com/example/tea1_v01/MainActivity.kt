@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 
 class MainActivity : BaseActivity() {
@@ -18,11 +20,12 @@ class MainActivity : BaseActivity() {
     private lateinit var editTextPseudo: EditText
     private lateinit var buttonOk: Button
     private var pseudoList: ArrayList<String> = ArrayList()
+    private var pseudoList2: ArrayList<String> = ArrayList()
+
     private lateinit var currentPseudo :String
+    private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,16 +41,22 @@ class MainActivity : BaseActivity() {
             //actions à effectuer quand on appuye sur OK
             val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
 
+
+
             if(pseudo!="") { //on vérifie qu'il y ai bien un nom rentré
 
                 loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
+                ListdeProfilsDeListeToDo = getProfilListeToDoList() //charge la liste des profils
+                pseudoList2 = getProfilListeToDoListAsString(ListdeProfilsDeListeToDo)
 
-                if (pseudoList.contains(pseudo)) {
+                if (pseudoList2.contains(pseudo)) {
+                    currentPseudo = pseudo
+
+                } else {
+                    pseudoList2.add(pseudo) //on ajoute le pseudo dans la liste
                     currentPseudo = pseudo
                     val profil = ProfilListeToDo(pseudo)
-                } else {
-                    pseudoList.add(pseudo) //on ajoute le pseudo dans la liste
-                    currentPseudo = pseudo
+                    (ListdeProfilsDeListeToDo).add(profil)
                 }
 
                 //editTextPseudo.clearComposingText() //on efface le pseudo ? (ne fonctionne pas)
@@ -56,7 +65,10 @@ class MainActivity : BaseActivity() {
                 Log.d("MainActivity", "Pseudo: $pseudo")
 
                 savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
+                saveProfilListeToDoList(ListdeProfilsDeListeToDo)
                 Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
+                Log.d("PMR", "Contenu de pseudoList2 : ${pseudoList2.toString()}")//on l'affiche
+
 
                 editTextPseudo.hint = pseudo
 
@@ -109,6 +121,35 @@ class MainActivity : BaseActivity() {
         if (pseudoSet != null) {
             pseudoList.addAll(pseudoSet)
         }
+    }
+
+    // Enregistrer une liste de ProfilListeToDo dans les préférences partagées
+    fun saveProfilListeToDoList(profilListeToDoList: MutableList<ProfilListeToDo>) {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = gson.toJson(profilListeToDoList)
+        val editor = sharedPreferences.edit()
+        editor.putString("profilListeToDoList", json)
+        editor.apply()
+    }
+
+    // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
+    fun getProfilListeToDoList(): MutableList<ProfilListeToDo> {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("profilListeToDoList", "")
+        val type = object : TypeToken<MutableList<ProfilListeToDo>>() {}.type
+        return gson.fromJson(json, type) ?: mutableListOf()
+    }
+
+
+    //Transformer la liste de profils en liste de leurs noms
+    fun getProfilListeToDoListAsString(ListeDesProfils:List<ProfilListeToDo>) : ArrayList<String>{
+        var ListePseudo : ArrayList<String> = ArrayList()
+        for(profil : ProfilListeToDo in ListeDesProfils) {
+            profil.getlogin()?.let { ListePseudo.add(it) }
+        }
+        return(ListePseudo)
     }
 
 
