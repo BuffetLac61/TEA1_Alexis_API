@@ -5,15 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 
 data class DropdownItem(val id: Int, val name: String) {
 }
 
 
-class DropdownAdapter(private val items: List<DropdownItem>) : RecyclerView.Adapter<DropdownAdapter.ViewHolder>() {
+class DropdownAdapter(private var items: List<DropdownItem>) : RecyclerView.Adapter<DropdownAdapter.ViewHolder>() {
     var profilListeToDo: ProfilListeToDo? = null
+
+    fun updateData(newItems: List<DropdownItem>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.dropdown_item_layout, parent, false)
         return ViewHolder(view)

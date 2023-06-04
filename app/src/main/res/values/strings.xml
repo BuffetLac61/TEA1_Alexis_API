@@ -20,5 +20,6 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="todo">TODO</string>
+    <string name="nouvelle_liste">Nouvelle Liste</string>
     />
 </resources>
