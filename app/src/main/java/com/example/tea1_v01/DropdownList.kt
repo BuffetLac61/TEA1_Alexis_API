@@ -4,24 +4,23 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-data class DropdownItem2(val id: Int, val name: String,val pseudoActif:String) {
+data class DropdownItem(val id: Int, val name: String,val pseudoActif:String) {
 }
 
+//la classe DropdownAdapter2 correspond à la liste des To-Do Lists
+class DropdownAdapter(private var items: List<DropdownItem>) : RecyclerView.Adapter<DropdownAdapter.ViewHolder>() {
 
-class DropdownAdapter2(private var items: List<DropdownItem2>) : RecyclerView.Adapter<DropdownAdapter2.ViewHolder>() {
-
-    fun updateData(newItems: List<DropdownItem2>) {
+    fun updateData(newItems: List<DropdownItem>) {
         items = newItems
         notifyDataSetChanged()
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.dropdown_item_layout_2, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.dropdown_item_layout, parent, false)
         return ViewHolder(view)
     }
 
@@ -36,12 +35,16 @@ class DropdownAdapter2(private var items: List<DropdownItem2>) : RecyclerView.Ad
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textViewName: TextView = itemView.findViewById(R.id.textViewName)
-        private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
-        fun bind(item: DropdownItem2) {
+
+        fun bind(item: DropdownItem) {
             textViewName.text = item.name
-            //checkBox.isChecked = false
 
             itemView.setOnClickListener {
+                val context = itemView.context
+                val intent = Intent(context, ShowListActivity::class.java)
+                intent.putExtra("pseudoActif", item.pseudoActif)
+                intent.putExtra("selectedItem", adapterPosition)
+                context.startActivity(intent) // Lancer l'intention pour ouvrir ShowListActivity
             }}
     }
 }

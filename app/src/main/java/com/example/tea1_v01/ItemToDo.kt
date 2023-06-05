@@ -1,5 +1,6 @@
 package com.example.tea1_v01
 
+//La classe ItemToDo représente les tâches à réaliser dans une ToDoList
 class ItemToDo {
     private var description: String = ""
     private var fait: Boolean = false

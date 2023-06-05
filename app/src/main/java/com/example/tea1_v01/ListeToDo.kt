@@ -1,6 +1,6 @@
 package com.example.tea1_v01
 
-
+//La classe ListeToDo représente les ToDoLists des utilisateurs
 class ListeToDo {
     private var titreListeToDo: String = ""
     private var lesItems: MutableList<ItemToDo> = arrayListOf()
