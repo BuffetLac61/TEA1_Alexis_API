@@ -8,8 +8,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -19,12 +24,22 @@ class ShowListActivity : AppCompatActivity() {
 
     private lateinit var toolbar: Toolbar
 
+
+    private lateinit var editTextNewList: EditText
+    private lateinit var buttonOk: Button
+
+    private lateinit var ListdeToDo: MutableList<ItemToDo>
+
+    private lateinit var todoListString: MutableList<String>
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_list)
 
         toolbar = findViewById(R.id.toolbarParametres)
+        val editText = findViewById<EditText>(R.id.editTextNewList)
+
         setSupportActionBar(toolbar)
 
         val selectedItem = intent.getIntExtra("selectedItem", -1)
@@ -32,11 +47,56 @@ class ShowListActivity : AppCompatActivity() {
         // Utilisez le numéro de l'élément sélectionné selon vos besoins
         nomPseudoActif = findViewById(R.id.nomProfilActif)
 
+        val ListdeProfilsDeListeToDo = getProfilListeToDoList()
+
         val TodolistActive : ListeToDo =
             findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)?.getMesListesToDo()?.get(selectedItem)!!
 
-        nomPseudoActif.text = "Profil : $pseudoActif - TodoList : " + TodolistActive.getTitreListeToDo()
+        nomPseudoActif.text = "Profil : $pseudoActif / TodoList : " + TodolistActive.getTitreListeToDo()
 
+        var item1 = ItemToDo("Faire la vaisselle")
+        var item2 = ItemToDo("Faire la vaisselle encore")
+        var item3 = ItemToDo("reFaire la vaisselle")
+        var items = arrayOf(item1, item2, item3)
+        TodolistActive.setLesItems(items)
+
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewShowActivity)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val dropdownItems = fromListToDoToDropDownItem2(TodolistActive,pseudoActif)
+
+        var adapter = DropdownAdapter2(dropdownItems)
+        recyclerView.adapter = adapter
+
+
+
+        //buttonOk.setOnClickListener {
+            //actions à effectuer quand on appuye sur OK
+            //val newTodo : String = editText.text.toString()//On récupère le pseudo qui est dans le champ
+            //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
+
+            /*
+                            if(newTodo!="") { //on vérifie qu'il y ai bien un nom rentré
+
+                                //todoListString = getToDoListAsString(TodolistActive)
+
+                                if (todoListString.contains(newTodo)) {//
+                                    Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    //TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
+                                    }
+
+
+                                //val dropdownItems = fromListToDoToDropDownItem(TodolistActive,pseudoActif)
+                                //adapter.updateData(dropdownItems)
+                                //adapter.notifyDataSetChanged()
+
+
+                                //saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
+
+                            }*/
+
+                    //}
 
 
 
@@ -105,4 +165,21 @@ class ShowListActivity : AppCompatActivity() {
         return profilListeToDo.getMesListesToDo().find { it.getTitreListeToDo() == listeName }
     }
 
+    fun fromListToDoToDropDownItem2(Listetodo1: ListeToDo,pseudoActif:String) : List<DropdownItem2>{
+        val i = 1
+        val dropdownItems = mutableListOf<DropdownItem2>()
+        for(listei in Listetodo1.getLesItems()){
+            dropdownItems.add(DropdownItem2(i,listei.getDescription(), pseudoActif))
+        }
+        return(dropdownItems)
+    }
+
+    fun getToDoListAsString(TodolistActive1: ListeToDo ):MutableList<String>{
+        ListdeToDo= TodolistActive1.getLesItems().toMutableList()//Récupère les items de la liste de todo TodolistActive
+        var listeDeToDoString : MutableList<String> = mutableListOf()
+        for(Itemi : ItemToDo in ListdeToDo){
+            listeDeToDoString.add(Itemi.getDescription())
+        }
+        return(listeDeToDoString)
+    }
 }
