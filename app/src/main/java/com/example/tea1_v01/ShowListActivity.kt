@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken
 class ShowListActivity : AppCompatActivity() {
 
     private lateinit var nomPseudoActif: TextView
+    private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
 
     private lateinit var toolbar: Toolbar
 
@@ -29,6 +30,7 @@ class ShowListActivity : AppCompatActivity() {
     private lateinit var btnOk: Button
 
     private lateinit var ListdeToDo: MutableList<ItemToDo>
+
 
     private lateinit var todoListString: MutableList<String>
 
@@ -45,25 +47,26 @@ class ShowListActivity : AppCompatActivity() {
 
 
         val selectedItem = intent.getIntExtra("selectedItem", -1)
-        val pseudoActif = intent.getStringExtra("pseudoActif")
+        var pseudoActif = intent.getStringExtra("pseudoActif")
         // Utilisez le numéro de l'élément sélectionné selon vos besoins
         nomPseudoActif = findViewById(R.id.nomProfilActif)
         editTextNewList = findViewById(R.id.editTextNewList)
         btnOk = findViewById(R.id.btnOk)
 
-        val ListdeProfilsDeListeToDo = getProfilListeToDoList()
-
+        var ProfilActif : ProfilListeToDo =
+            findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
         val TodolistActive : ListeToDo =
-            findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)?.getMesListesToDo()?.get(selectedItem)!!
+            ProfilActif.getMesListesToDo()?.get(selectedItem)!!
 
         nomPseudoActif.text = "Profil : $pseudoActif / TodoList : " + TodolistActive.getTitreListeToDo()
 
+        /*
         var item1 = ItemToDo("Faire la vaisselle")
         var item2 = ItemToDo("Faire la vaisselle encore")
         var item3 = ItemToDo("reFaire la vaisselle")
         var items = arrayOf(item1, item2, item3)
         TodolistActive.setLesItems(items)
-
+        */
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewShowActivity)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -76,37 +79,39 @@ class ShowListActivity : AppCompatActivity() {
             //actions à effectuer quand on appuye sur OK
             val newTodo : String = editTextNewList.text.toString()//On récupère le pseudo qui est dans le champ
 
+                if(newTodo!="") { //on vérifie qu'il y ai bien un nom rentré
+                    //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
 
+                    ListdeProfilsDeListeToDo=getProfilListeToDoList()//charge la liste des pseudos à pertir des préférences partagées
+                    ProfilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo,pseudoActif)!!
+                    todoListString = getToDoListAsString(TodolistActive)
 
-                            if(newTodo!="") { //on vérifie qu'il y ai bien un nom rentré
-                                //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
-                                todoListString = getToDoListAsString(TodolistActive)
+                    if (todoListString.contains(newTodo)) {//
+                        Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
+                    } else {
+                        TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
+                        Log.i("PMR", "[OPENED]Contenu de TodolistActive : $TodolistActive")
+                        Log.i("PMR", "[OPENED]Contenu de ProfilActif : $ProfilActif")
 
-                                if (todoListString.contains(newTodo)) {//
-                                    Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
-                                    findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)?.getMesListesToDo()!!.get(selectedItem).addItem(newTodo)
-
-                                }
-
-
-                                val dropdownItems = fromListToDoToDropDownItem2(TodolistActive,pseudoActif)
-                                adapter.updateData(dropdownItems)
-                                adapter.notifyDataSetChanged()
-
-
-
-
-
-                                Log.i("PMR", "[OPENED]Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
-
-
-                                saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
-
-                            }
+                        //updateProfilListeToDo(ProfilActif,ListdeProfilsDeListeToDo)
+                        updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo,TodolistActive)
+                        //findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)?.getMesListesToDo()!!.get(selectedItem).addItem(newTodo)
+                        saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
 
                     }
+
+
+                    val dropdownItems = fromListToDoToDropDownItem2(TodolistActive,pseudoActif)
+                    adapter.updateData(dropdownItems)
+                    adapter.notifyDataSetChanged()
+
+
+                    Log.i("PMR", "[OPENED]Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
+
+
+                }
+
+        }
 
 
 
@@ -192,4 +197,30 @@ class ShowListActivity : AppCompatActivity() {
         }
         return(listeDeToDoString)
     }
+
+    fun updateProfilListeToDo(profilListeToDo: ProfilListeToDo, listdeProfilsDeListeToDo: MutableList<ProfilListeToDo>) {
+        val index = listdeProfilsDeListeToDo.indexOfFirst { it.getlogin() == profilListeToDo.getlogin() }
+        if (index != -1) {
+            listdeProfilsDeListeToDo[index] = profilListeToDo
+        } else {
+            listdeProfilsDeListeToDo.add(profilListeToDo)
+        }
+    }
+
+    fun updateListeToDoInProfilListeToDoList(profilListeToDoList: MutableList<ProfilListeToDo>, listeToDo: ListeToDo) {
+        val listeToDoName = listeToDo.getTitreListeToDo()
+        for (profilListeToDo in profilListeToDoList) {
+            val mesListesToDo = profilListeToDo.getMesListesToDo()
+            for (i in 0 until mesListesToDo.size) {
+                val currentListeToDo = mesListesToDo[i]
+                if (currentListeToDo.getTitreListeToDo() == listeToDoName) {
+                    mesListesToDo[i] = listeToDo
+                    break
+                }
+            }
+        }
+    }
+
+
+
 }

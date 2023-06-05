@@ -150,7 +150,7 @@ class ChoixListActivity : BaseActivity() {
         var item1 = ItemToDo("Faire la vaisselle")
         var item2 = ItemToDo("Faire la vaisselle encore")
         var item3 = ItemToDo("reFaire la vaisselle")
-        var items = arrayOf(item1, item2, item3)
+        var items = arrayListOf(item1, item2, item3)
         liste.setLesItems(items)
 
         // Ajout de la liste à l'instance de ProfilListeToDo
@@ -163,7 +163,7 @@ class ChoixListActivity : BaseActivity() {
         item1 = ItemToDo("Faire la vaisselle")
         item2 = ItemToDo("Faire la vaisselle encore")
         item3 = ItemToDo("reFaire la vaisselle")
-        items = arrayOf(item1, item2, item3)
+        items = arrayListOf(item1, item2, item3)
 
         liste.setLesItems(items)
 
