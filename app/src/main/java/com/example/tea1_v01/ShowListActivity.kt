@@ -75,23 +75,31 @@ class ShowListActivity : AppCompatActivity() {
         btnOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
             val newTodo : String = editTextNewList.text.toString()//On récupère le pseudo qui est dans le champ
-            Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
+
 
 
                             if(newTodo!="") { //on vérifie qu'il y ai bien un nom rentré
-
+                                //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
                                 todoListString = getToDoListAsString(TodolistActive)
 
                                 if (todoListString.contains(newTodo)) {//
                                     Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
                                 } else {
                                     TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
-                                    }
+                                    findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)?.getMesListesToDo()!!.get(selectedItem).addItem(newTodo)
+
+                                }
 
 
                                 val dropdownItems = fromListToDoToDropDownItem2(TodolistActive,pseudoActif)
                                 adapter.updateData(dropdownItems)
                                 adapter.notifyDataSetChanged()
+
+
+
+
+
+                                Log.i("PMR", "[OPENED]Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
 
 
                                 saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
