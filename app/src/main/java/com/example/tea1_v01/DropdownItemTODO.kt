@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -35,16 +36,12 @@ class DropdownAdapter2(private var items: List<DropdownItem2>) : RecyclerView.Ad
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textViewName: TextView = itemView.findViewById(R.id.textViewName)
-
+        private val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
         fun bind(item: DropdownItem2) {
             textViewName.text = item.name
+            //checkBox.isChecked = false
 
             itemView.setOnClickListener {
-                val context = itemView.context
-                val intent = Intent(context, ShowListActivity::class.java)
-                intent.putExtra("pseudoActif", item.pseudoActif)
-                intent.putExtra("selectedItem", adapterPosition)
-                context.startActivity(intent) // Lancer l'intention pour ouvrir ShowListActivity
             }}
     }
 }

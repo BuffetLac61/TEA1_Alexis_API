@@ -26,7 +26,7 @@ class ShowListActivity : AppCompatActivity() {
 
 
     private lateinit var editTextNewList: EditText
-    private lateinit var buttonOk: Button
+    private lateinit var btnOk: Button
 
     private lateinit var ListdeToDo: MutableList<ItemToDo>
 
@@ -38,14 +38,18 @@ class ShowListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_show_list)
 
         toolbar = findViewById(R.id.toolbarParametres)
-        val editText = findViewById<EditText>(R.id.editTextNewList)
-
         setSupportActionBar(toolbar)
+
+
+        val editTextNewTodo = findViewById<EditText>(R.id.editTextNewList)
+
 
         val selectedItem = intent.getIntExtra("selectedItem", -1)
         val pseudoActif = intent.getStringExtra("pseudoActif")
         // Utilisez le numéro de l'élément sélectionné selon vos besoins
         nomPseudoActif = findViewById(R.id.nomProfilActif)
+        editTextNewList = findViewById(R.id.editTextNewList)
+        btnOk = findViewById(R.id.btnOk)
 
         val ListdeProfilsDeListeToDo = getProfilListeToDoList()
 
@@ -68,35 +72,33 @@ class ShowListActivity : AppCompatActivity() {
         var adapter = DropdownAdapter2(dropdownItems)
         recyclerView.adapter = adapter
 
-
-
-        //buttonOk.setOnClickListener {
+        btnOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
-            //val newTodo : String = editText.text.toString()//On récupère le pseudo qui est dans le champ
-            //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
+            val newTodo : String = editTextNewList.text.toString()//On récupère le pseudo qui est dans le champ
+            Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
 
-            /*
+
                             if(newTodo!="") { //on vérifie qu'il y ai bien un nom rentré
 
-                                //todoListString = getToDoListAsString(TodolistActive)
+                                todoListString = getToDoListAsString(TodolistActive)
 
                                 if (todoListString.contains(newTodo)) {//
                                     Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
                                 } else {
-                                    //TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
+                                    TodolistActive.addItem(newTodo) //on ajouter l'item à la liste
                                     }
 
 
-                                //val dropdownItems = fromListToDoToDropDownItem(TodolistActive,pseudoActif)
-                                //adapter.updateData(dropdownItems)
-                                //adapter.notifyDataSetChanged()
+                                val dropdownItems = fromListToDoToDropDownItem2(TodolistActive,pseudoActif)
+                                adapter.updateData(dropdownItems)
+                                adapter.notifyDataSetChanged()
 
 
-                                //saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
+                                saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifs
 
-                            }*/
+                            }
 
-                    //}
+                    }
 
 
 
