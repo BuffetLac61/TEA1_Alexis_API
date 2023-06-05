@@ -17,6 +17,15 @@ class ListeToDo {
         lesItems = items
     }
 
+    fun addItem(description: String){
+        val newList = this.getLesItems().toMutableList() // Convertir la liste en MutableList
+        val newItem = ItemToDo(description)
+        newList.add(newItem)
+        //val newListToDo : ListeToDo = ListeToDo()
+        //newListToDo.setLesItems(newList.toTypedArray())
+        this.lesItems = newList.toTypedArray()
+    }
+
     fun getLesItems(): Array<ItemToDo> {
         return lesItems
     }
