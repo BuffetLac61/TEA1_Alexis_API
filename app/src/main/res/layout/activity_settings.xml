@@ -10,7 +10,7 @@
         android:id="@+id/toolbarParametres"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primaryColor"
         app:titleTextColor="@color/cardview_light_background"
         app:title="SettingsActivity"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"

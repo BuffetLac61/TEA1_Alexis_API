@@ -1,9 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.TEA1_V01" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+    <!-- Thème de votre application -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <!-- Couleur principale de l'application -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <!-- Couleur d'accentuation -->
+        <item name="colorAccent">@color/accentColor</item>
+        <!-- Couleur de fond -->
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <!-- Autres attributs de style -->
+        <!-- Couleur du texte primaire en mode sombre -->
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <!-- Couleur du texte secondaire en mode sombre -->
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
     </style>
-
-    <style name="Theme.TEA1_V01" parent="Base.Theme.TEA1_V01" />
 </resources>

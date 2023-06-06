@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:titleTextColor="@color/cardview_light_background"
+        app:titleTextColor="@color/textColorPrimaryDark"
         app:title="ChoixListActivity"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:contentInsetEnd="16dp"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text="Titre"
         android:textSize="20sp"
-        android:textColor="@color/design_default_color_primary_dark"
+        android:textColor="@color/textColorPrimary"
         android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
         android:padding="8dp"
@@ -45,7 +45,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:textColorHighlight="?attr/colorAccent"
+        android:backgroundTint="?attr/colorPrimary"
+        />
 
     <!-- Barre d'édition de texte -->
     <EditText

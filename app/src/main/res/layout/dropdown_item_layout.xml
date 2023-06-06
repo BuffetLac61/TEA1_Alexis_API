@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="Liste 1"
-            android:textColor="@color/black"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             android:paddingStart="12dp"
             android:paddingTop="12dp"
@@ -40,6 +40,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider_color"/>
+        android:background="@color/dividerColor"/>
 
 </LinearLayout>

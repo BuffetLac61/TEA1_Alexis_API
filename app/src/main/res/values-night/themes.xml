@@ -1,7 +1,18 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.TEA1_V01" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<resources>
+    <!-- Thème de votre application en mode sombre -->
+    <!-- Thème de votre application en mode sombre -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <!-- Couleur principale de l'application en mode sombre -->
+        <item name="colorPrimary">@color/primaryColorDark</item>
+        <!-- Couleur d'accentuation en mode sombre -->
+        <item name="colorAccent">@color/accentColorDark</item>
+        <!-- Couleur de fond en mode sombre -->
+        <item name="android:windowBackground">@color/backgroundColorDark</item>
+        <!-- Couleur du texte primaire en mode sombre -->
+        <item name="android:textColorPrimary">@color/textColorPrimaryDark</item>
+        <!-- Couleur du texte secondaire en mode sombre -->
+        <item name="android:textColorSecondary">@color/textColorSecondaryDark</item>
+        <!-- Autres attributs de style pour le mode sombre -->
     </style>
 </resources>
