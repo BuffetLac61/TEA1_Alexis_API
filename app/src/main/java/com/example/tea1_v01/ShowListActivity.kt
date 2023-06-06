@@ -64,7 +64,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         btnOk.setOnClickListener {
             // Actions à effectuer lorsque le bouton OK est cliqué
             val newTodo: String = editTextNewList.text.toString()
-
+            editTextNewList.setText("") // Vide le contenu du champ EditText
             if (newTodo != "") {
                 ListdeProfilsDeListeToDo = getProfilListeToDoList()
                 findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif)!!
@@ -77,6 +77,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
                     todoListActive.addItem(newTodo)
                     dropdownItems = todoListActive.getLesItems().toList()
                     adapter.updateDataWithoutNotify(dropdownItems)
+                    adapter.notifyDataSetChanged()
 
                     updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
@@ -165,7 +166,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         }
     }
 
-    fun updateItemToDo(item: ItemToDo, todoListActive: ListeToDo) {
+    fun updateItemToDo(item: ItemToDo, todoListActive: ListeToDo): Int {
         val descriptionToUpdate = item.getDescription()
         val listOfItem = todoListActive.getLesItems()
         for (i in 0 until listOfItem.size) {
@@ -174,19 +175,17 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
                 // Mettre à jour les attributs de l'ItemToDo existant avec les attributs du nouvel ItemToDo
                 currentItem.setFait(item.getFait())
                 // Sortir de la boucle une fois la mise à jour effectuée
-                break
+                return i
             }
+            todoListActive.setLesItems(listOfItem)
         }
-        //on met à jour les Items de la todolist
-        todoListActive.setLesItems(listOfItem)
+        return -1 // Retourner -1 si l'élément n'a pas été trouvé
     }
 
 
 
 
     override fun onItemChecked(item: ItemToDo, isChecked: Boolean) {
-
-        item.setFait(isChecked)
 
         val pseudoActif = intent.getStringExtra("pseudoActif")
         val selectedListe = intent.getIntExtra("selectedItem", -1) //Numéro de la ListeToDo séléctionnée dans ChoixListeActivity
@@ -203,11 +202,16 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         if (liste.isNotEmpty()) {
             item.setFait(isChecked)
 
-            updateItemToDo(item,todoListActive)
+            val updatedIndex = updateItemToDo(item, todoListActive)
+            if (updatedIndex != -1) {
+                dropdownItems = todoListActive.getLesItems().toList()
+                adapter.updateDataWithoutNotify(dropdownItems)
+                //adapter.notifyItemChanged(updatedIndex)
+            }
             updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
-            dropdownItems = todoListActive.getLesItems().toList()
-            adapter.updateDataWithoutNotify(dropdownItems)
+            //adapter.notifyDataSetChanged()
+
 
             saveProfilListeToDoList(ListdeProfilsDeListeToDo)
             Log.i("PMR","Contenu de item : $item")
