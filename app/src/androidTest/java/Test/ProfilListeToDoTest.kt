@@ -1,10 +1,8 @@
 package Test
 
-import android.content.ClipData.Item
 import com.example.tea1_v01.ItemToDo
 import com.example.tea1_v01.ListeToDo
 import com.example.tea1_v01.ProfilListeToDo
-import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ProfilListeToDoTest {
@@ -43,7 +41,7 @@ class ProfilListeToDoTest {
         profil.ajouterListe(liste)
 
         //On marque un item comme fait
-        var itemModified = profil.getMesListesToDo()[0].rechercherItem("Faire la vaisselle")
+        val itemModified = profil.getMesListesToDo()[0].rechercherItem("Faire la vaisselle")
 
         if (itemModified != null) {
             itemModified.setFait(true)

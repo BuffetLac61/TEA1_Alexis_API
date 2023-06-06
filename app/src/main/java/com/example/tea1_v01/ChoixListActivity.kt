@@ -20,7 +20,6 @@ class ChoixListActivity : BaseActivity() {
 
     private lateinit var nomPseudoActif: TextView
     private lateinit var toolbar: Toolbar
-    lateinit var profilListeToDo1 : ProfilListeToDo
     lateinit var profilListeToDo2 : ProfilListeToDo
 
 
@@ -51,7 +50,7 @@ class ChoixListActivity : BaseActivity() {
         val pseudoActif = intent.getStringExtra("pseudoActif")
 
         nomPseudoActif = findViewById(R.id.nomProfilActif)
-        nomPseudoActif.text = "Profil : "+pseudoActif
+        nomPseudoActif.text = "Profile : $pseudoActif"
 
 
 
@@ -59,12 +58,12 @@ class ChoixListActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
 
-        profilListeToDo1 = ajouterListe_test(pseudoActif)
+        //profilListeToDo1 = ajouterListe_test(pseudoActif)
         profilListeToDo2 = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
 
         val dropdownItems = fromListToDoToDropDownItem(profilListeToDo2,pseudoActif)
 
-        var adapter = DropdownAdapter(dropdownItems)
+        val adapter = DropdownAdapter(dropdownItems)
         recyclerView.adapter = adapter
 
 
@@ -83,7 +82,7 @@ class ChoixListActivity : BaseActivity() {
                     Toast.makeText(applicationContext, "Cette liste existe déjà", Toast.LENGTH_SHORT).show()
 
                 } else {
-                    var newliste = ListeToDo()
+                    val newliste = ListeToDo()
                     newliste.setTitreListeToDo(newTodoList)
 
                     profilActif.ajouterListe(newliste)
@@ -137,7 +136,7 @@ class ChoixListActivity : BaseActivity() {
         return(dropdownItems)
     }
 
-    fun ajouterListe_test(monLogin: String?) : ProfilListeToDo{
+    /*fun ajouterListe_test(monLogin: String?) : ProfilListeToDo{
         // Création d'une instance de ProfilListeToDo
         val profil = ProfilListeToDo(monLogin)
 
@@ -182,7 +181,7 @@ class ChoixListActivity : BaseActivity() {
 
         return(profil)
 
-    }
+    }*/
 
 
     // Enregistrer une liste de ProfilListeToDo dans les préférences partagées
@@ -194,15 +193,6 @@ class ChoixListActivity : BaseActivity() {
         editor.putString("profilListeToDoList", json)
         editor.apply()
     }
-
-    private fun loadPseudoListFromSharedPreferences(){
-        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        val pseudoSet = sharedPreferences.getStringSet("pseudoList", HashSet<String>())
-        pseudoList2.clear()
-        if (pseudoSet != null) {
-            pseudoList2.addAll(pseudoSet)
-
-    }}
 
     //fonction qui prend en paramètre une liste de ProfilListeToDo ainsi qu'un login, et renvoie la ProfilListeToDo qui correspond au login
     fun findProfilListeToDoByLogin(profilListeToDoList: List<ProfilListeToDo>, login: String): ProfilListeToDo? {
@@ -222,7 +212,7 @@ class ChoixListActivity : BaseActivity() {
 
     //Transformer la liste de profils en liste de leurs noms
     fun getListeToDoListAsString(listesDuProfil: ProfilListeToDo) : ArrayList<String>{
-        var lestdestodo : ArrayList<String> = ArrayList()
+        val lestdestodo : ArrayList<String> = ArrayList()
         for(liste : ListeToDo in listesDuProfil.getMesListesToDo()) {
             liste.getTitreListeToDo().let { lestdestodo.add(it) }
         }

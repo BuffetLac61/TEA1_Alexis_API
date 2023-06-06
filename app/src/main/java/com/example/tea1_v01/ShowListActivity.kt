@@ -49,7 +49,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
 
         // Récupération du profil actif et de la liste sélectionnée
         val profilActif = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
-        val todoListActive: ListeToDo = profilActif.getMesListesToDo()?.get(selectedItem)!!
+        val todoListActive: ListeToDo = profilActif.getMesListesToDo().get(selectedItem)
 
         // Affichage du pseudo actif et du titre de la liste
         nomPseudoActif.text = "Profil : $pseudoActif / TodoList : " + todoListActive.getTitreListeToDo()
@@ -67,7 +67,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
 
             if (newTodo != "") {
                 ListdeProfilsDeListeToDo = getProfilListeToDoList()
-                val profilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif)!!
+                findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif)!!
                 val todoListString = getToDoListAsString(todoListActive)
 
                 if (todoListString.contains(newTodo)) {
@@ -132,12 +132,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         return gson.fromJson(json, type) ?: mutableListOf()
     }
 
-    // Fonction qui prend en paramètre un ProfilListeToDo ainsi qu'un nom de liste, et renvoie la ListeToDo qui correspond au nom
-    fun findListeToDoByName(profilListeToDo: ProfilListeToDo, listeName: String): ListeToDo? {
-        return profilListeToDo.getMesListesToDo().find { it.getTitreListeToDo() == listeName }
-    }
-
-/*    // Convertir la liste de ToDo en liste d'objets DropdownItem2
+    /*    // Convertir la liste de ToDo en liste d'objets DropdownItem2
     fun fromListToDoToDropDownItem2(listeToDo: ListeToDo, pseudoActif: String): List<DropdownItem2> {
         val dropdownItems = mutableListOf<DropdownItem2>()
         for ((index, item) in listeToDo.getLesItems().withIndex()) {
@@ -155,16 +150,6 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         return listeDeToDoString
     }
 
-    // Mettre à jour un profil dans la liste de profils
-    fun updateProfilListeToDo(profilListeToDo: ProfilListeToDo, listeDeProfilsDeListeToDo: MutableList<ProfilListeToDo>) {
-        val index = listeDeProfilsDeListeToDo.indexOfFirst { it.getlogin() == profilListeToDo.getlogin() }
-        if (index != -1) {
-            listeDeProfilsDeListeToDo[index] = profilListeToDo
-        } else {
-            listeDeProfilsDeListeToDo.add(profilListeToDo)
-        }
-    }
-
     // Mettre à jour une liste de ToDo dans la liste de profils
     fun updateListeToDoInProfilListeToDoList(profilListeToDoList: MutableList<ProfilListeToDo>, listeToDo: ListeToDo) {
         val listeToDoName = listeToDo.getTitreListeToDo()
@@ -180,6 +165,25 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         }
     }
 
+    fun updateItemToDo(item: ItemToDo, todoListActive: ListeToDo) {
+        val descriptionToUpdate = item.getDescription()
+        val listOfItem = todoListActive.getLesItems()
+        for (i in 0 until listOfItem.size) {
+            val currentItem = listOfItem[i]
+            if (currentItem.getDescription() == descriptionToUpdate) {
+                // Mettre à jour les attributs de l'ItemToDo existant avec les attributs du nouvel ItemToDo
+                currentItem.setFait(item.getFait())
+                // Sortir de la boucle une fois la mise à jour effectuée
+                break
+            }
+        }
+        //on met à jour les Items de la todolist
+        todoListActive.setLesItems(listOfItem)
+    }
+
+
+
+
     override fun onItemChecked(item: ItemToDo, isChecked: Boolean) {
 
         item.setFait(isChecked)
@@ -191,27 +195,25 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         ListdeProfilsDeListeToDo = getProfilListeToDoList()
 
         val profilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif!!)!!
-        val todoListActive = profilActif.getMesListesToDo()?.get(selectedListe)!!
+        val todoListActive = profilActif.getMesListesToDo().get(selectedListe)
 
-        val mesListesToDo = profilActif.getMesListesToDo()
+        profilActif.getMesListesToDo()
         val liste = todoListActive.getLesItems()
 
         if (liste.isNotEmpty()) {
-            val itemToDo = item
-            itemToDo.setFait(isChecked)
+            item.setFait(isChecked)
 
-            Log.i("PMR","Contenu de todoListActive : $todoListActive")
-            Log.i("PMR","Contenu de selectedListe : $selectedListe")
-
-
-
+            updateItemToDo(item,todoListActive)
             updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
             dropdownItems = todoListActive.getLesItems().toList()
             adapter.updateDataWithoutNotify(dropdownItems)
 
             saveProfilListeToDoList(ListdeProfilsDeListeToDo)
+            Log.i("PMR","Contenu de item : $item")
 
+            Log.i("PMR","Contenu de todoListActive : $todoListActive")
+            Log.i("PMR","Contenu de selectedListe : $selectedListe")
             Log.i("PMR","Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
 
         } else {

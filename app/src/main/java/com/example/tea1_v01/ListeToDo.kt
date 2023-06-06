@@ -13,8 +13,8 @@ class ListeToDo {
         return titreListeToDo
     }
 
-    fun setLesItems(items: ArrayList<ItemToDo>) {
-        lesItems = items
+    fun setLesItems(items: Array<ItemToDo>) {
+        lesItems = items.toMutableList()
     }
 
     fun addItem(description: String){
@@ -41,7 +41,7 @@ class ListeToDo {
     }
 
     override fun toString(): String {
-        var chaineAffichee : String ="###### $titreListeToDo ######"
+        var chaineAffichee ="###### $titreListeToDo ######"
         for (itemi in this.getLesItems()){
             chaineAffichee = chaineAffichee +"\n\t"+ itemi.toString()
         }
