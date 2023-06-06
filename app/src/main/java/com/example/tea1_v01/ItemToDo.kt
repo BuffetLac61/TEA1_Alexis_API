@@ -16,6 +16,10 @@ class ItemToDo {
         this.fait = fait
     }
 
+    fun getFait() : Boolean{
+        return fait
+    }
+
     fun setDescription(uneDescription: String) {
         description = uneDescription
     }

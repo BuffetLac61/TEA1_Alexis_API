@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListener {
+class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
 
     private lateinit var nomPseudoActif: TextView
     private lateinit var ListdeProfilsDeListeToDo: MutableList<ProfilListeToDo>
@@ -28,67 +28,64 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
     private lateinit var editTextNewList: EditText
     private lateinit var btnOk: Button
 
-    private lateinit var ListdeToDo: MutableList<ItemToDo>
-
-    private lateinit var todoListString: MutableList<String>
+    private lateinit var adapter: ItemAdapter
+    private var dropdownItems: List<ItemToDo> = emptyList()
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_list)
 
+        // Initialisation des vues
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
-
-        val editTextNewTodo = findViewById<EditText>(R.id.editTextNewList)
-
-        val selectedItem = intent.getIntExtra("selectedItem", -1)
-        val pseudoActif = intent.getStringExtra("pseudoActif")
-        // Utilisez le numéro de l'élément sélectionné selon vos besoins
         nomPseudoActif = findViewById(R.id.nomProfilActif)
         editTextNewList = findViewById(R.id.editTextNewList)
         btnOk = findViewById(R.id.btnOk)
 
-        val profilActif: ProfilListeToDo = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
+        // Récupération des données passées par l'activité précédente
+        val selectedItem = intent.getIntExtra("selectedItem", -1)
+        val pseudoActif = intent.getStringExtra("pseudoActif")
+
+        // Récupération du profil actif et de la liste sélectionnée
+        val profilActif = findProfilListeToDoByLogin(getProfilListeToDoList(), pseudoActif!!)!!
         val todoListActive: ListeToDo = profilActif.getMesListesToDo()?.get(selectedItem)!!
 
+        // Affichage du pseudo actif et du titre de la liste
         nomPseudoActif.text = "Profil : $pseudoActif / TodoList : " + todoListActive.getTitreListeToDo()
 
+        // Configuration du RecyclerView et de l'adaptateur
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewShowActivity)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val dropdownItems = fromListToDoToDropDownItem2(todoListActive, pseudoActif)
-
-        val adapter = DropdownAdapter2(dropdownItems, this) // Passer l'activité en tant qu'écouteur
+        dropdownItems = todoListActive.getLesItems().toList()
+        adapter = ItemAdapter(dropdownItems, this)
         recyclerView.adapter = adapter
 
         btnOk.setOnClickListener {
-            //actions à effectuer quand on appuye sur OK
-            val newTodo: String = editTextNewList.text.toString() //On récupère le pseudo qui est dans le champ
+            // Actions à effectuer lorsque le bouton OK est cliqué
+            val newTodo: String = editTextNewList.text.toString()
 
-            if (newTodo != "") { //on vérifie qu'il y a bien un nom rentré
-                //Toast.makeText(applicationContext, newTodo, Toast.LENGTH_SHORT).show()
-
-                ListdeProfilsDeListeToDo = getProfilListeToDoList() //charge la liste des pseudos à partir des préférences partagées
+            if (newTodo != "") {
+                ListdeProfilsDeListeToDo = getProfilListeToDoList()
                 val profilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif)!!
-                todoListString = getToDoListAsString(todoListActive)
+                val todoListString = getToDoListAsString(todoListActive)
 
                 if (todoListString.contains(newTodo)) {
                     Toast.makeText(applicationContext, "Cette ToDo existe déjà", Toast.LENGTH_SHORT).show()
                 } else {
+                    // Ajouter la nouvelle ToDo à la liste active
                     todoListActive.addItem(newTodo)
-                    Log.i("PMR", "[OPENED]Contenu de todoListActive : $todoListActive")
-                    Log.i("PMR", "[OPENED]Contenu de profilActif : $profilActif")
+                    dropdownItems = todoListActive.getLesItems().toList()
+                    adapter.updateDataWithoutNotify(dropdownItems)
 
                     updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
-                    saveProfilListeToDoList(ListdeProfilsDeListeToDo) //On sauvegarde les modifications
+                    saveProfilListeToDoList(ListdeProfilsDeListeToDo)
                 }
 
-                val dropdownItems = fromListToDoToDropDownItem2(todoListActive, pseudoActif)
-                adapter.updateData(dropdownItems)
-                adapter.notifyDataSetChanged()
-
-                Log.i("PMR", "[OPENED]Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
+                // Mettre à jour la liste affichée dans le RecyclerView
+                val dropdownItems = todoListActive.getLesItems().toList()
+                adapter.updateDataWithoutNotify(dropdownItems)
             }
         }
     }
@@ -101,10 +98,9 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                // Action à effectuer lorsque le bouton des paramètres est cliqué
+                // Actions à effectuer lorsque le bouton des paramètres est cliqué
                 finish()
                 val intent = Intent(this, SettingsActivity::class.java)
-                Log.i("PMR", "[OPENED]SettingsActivity")
                 startActivity(intent)
                 true
             }
@@ -122,7 +118,7 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
         editor.apply()
     }
 
-    //fonction qui prend en paramètre une liste de ProfilListeToDo ainsi qu'un login, et renvoie la ProfilListeToDo qui correspond au login
+    // Fonction qui prend en paramètre une liste de ProfilListeToDo ainsi qu'un login, et renvoie la ProfilListeToDo qui correspond au login
     fun findProfilListeToDoByLogin(profilListeToDoList: List<ProfilListeToDo>, login: String): ProfilListeToDo? {
         return profilListeToDoList.find { it.login == login }
     }
@@ -136,28 +132,21 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
         return gson.fromJson(json, type) ?: mutableListOf()
     }
 
-    // Transformer la liste de profils en liste de leurs noms
-    fun getListeToDoListAsString(listesDuProfil: ProfilListeToDo): ArrayList<String> {
-        val lestdestodo: ArrayList<String> = ArrayList()
-        for (liste: ListeToDo in listesDuProfil.getMesListesToDo()) {
-            liste.getTitreListeToDo().let { lestdestodo.add(it) }
-        }
-        return lestdestodo
-    }
-
-    //fonction qui prend en paramètre un ProfilListeToDo ainsi qu'un nom de liste, et renvoie la ListeToDo qui correspond au nom
+    // Fonction qui prend en paramètre un ProfilListeToDo ainsi qu'un nom de liste, et renvoie la ListeToDo qui correspond au nom
     fun findListeToDoByName(profilListeToDo: ProfilListeToDo, listeName: String): ListeToDo? {
         return profilListeToDo.getMesListesToDo().find { it.getTitreListeToDo() == listeName }
     }
 
+/*    // Convertir la liste de ToDo en liste d'objets DropdownItem2
     fun fromListToDoToDropDownItem2(listeToDo: ListeToDo, pseudoActif: String): List<DropdownItem2> {
         val dropdownItems = mutableListOf<DropdownItem2>()
         for ((index, item) in listeToDo.getLesItems().withIndex()) {
             dropdownItems.add(DropdownItem2(index + 1, item.getDescription(), pseudoActif))
         }
         return dropdownItems
-    }
+    }*/
 
+    // Convertir la liste de ToDo en liste de chaînes de caractères
     fun getToDoListAsString(listeToDo: ListeToDo): MutableList<String> {
         val listeDeToDoString: MutableList<String> = mutableListOf()
         for (item: ItemToDo in listeToDo.getLesItems()) {
@@ -166,6 +155,7 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
         return listeDeToDoString
     }
 
+    // Mettre à jour un profil dans la liste de profils
     fun updateProfilListeToDo(profilListeToDo: ProfilListeToDo, listeDeProfilsDeListeToDo: MutableList<ProfilListeToDo>) {
         val index = listeDeProfilsDeListeToDo.indexOfFirst { it.getlogin() == profilListeToDo.getlogin() }
         if (index != -1) {
@@ -175,6 +165,7 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
         }
     }
 
+    // Mettre à jour une liste de ToDo dans la liste de profils
     fun updateListeToDoInProfilListeToDoList(profilListeToDoList: MutableList<ProfilListeToDo>, listeToDo: ListeToDo) {
         val listeToDoName = listeToDo.getTitreListeToDo()
         for (profilListeToDo in profilListeToDoList) {
@@ -189,40 +180,42 @@ class ShowListActivity : AppCompatActivity(), DropdownAdapter2.OnItemCheckListen
         }
     }
 
-    override fun onItemChecked(item: DropdownItem2, isChecked: Boolean) {
-        item.isChecked = isChecked
-        val pseudoActif = intent.getStringExtra("pseudoActif")
+    override fun onItemChecked(item: ItemToDo, isChecked: Boolean) {
 
-        ListdeProfilsDeListeToDo = getProfilListeToDoList() //charge la liste des pseudos à partir des préférences partagées
+        item.setFait(isChecked)
+
+        val pseudoActif = intent.getStringExtra("pseudoActif")
+        val selectedListe = intent.getIntExtra("selectedItem", -1) //Numéro de la ListeToDo séléctionnée dans ChoixListeActivity
+
+
+        ListdeProfilsDeListeToDo = getProfilListeToDoList()
 
         val profilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif!!)!!
+        val todoListActive = profilActif.getMesListesToDo()?.get(selectedListe)!!
 
-        val selectedItem = item.id - 1 // Adapter les indices
         val mesListesToDo = profilActif.getMesListesToDo()
-        val todoListActive: ListeToDo? = if (mesListesToDo.size > selectedItem) mesListesToDo[selectedItem] else null
+        val liste = todoListActive.getLesItems()
 
-        // Récupérer l'ItemToDo correspondant
-        if (todoListActive != null) {
+        if (liste.isNotEmpty()) {
+            val itemToDo = item
+            itemToDo.setFait(isChecked)
 
-            val items = todoListActive.getLesItems()
-            if (items.isNotEmpty() && selectedItem < items.size) {
-                val itemToDo = items[selectedItem]
-                // Utilisez itemToDo selon vos besoins
-                // Mettre à jour la propriété estFait
-                itemToDo.setFait(isChecked)
+            Log.i("PMR","Contenu de todoListActive : $todoListActive")
+            Log.i("PMR","Contenu de selectedListe : $selectedListe")
 
-                updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
-                Log.i("PMR", "[OPENED]Contenu de itemToDo : $itemToDo")
-                Log.i("PMR", "[OPENED]Contenu de todoListActive : $todoListActive")
-                Log.i("PMR", "[OPENED]Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
 
-                // Enregistrer les modifications dans la liste de profils
-                saveProfilListeToDoList(ListdeProfilsDeListeToDo)
-            } else {
-                // Gérez le cas où le tableau est vide ou selectedItem est invalide
-            }
+            updateListeToDoInProfilListeToDoList(ListdeProfilsDeListeToDo, todoListActive)
 
+            dropdownItems = todoListActive.getLesItems().toList()
+            adapter.updateDataWithoutNotify(dropdownItems)
+
+            saveProfilListeToDoList(ListdeProfilsDeListeToDo)
+
+            Log.i("PMR","Contenu de ListdeProfilsDeListeToDo : $ListdeProfilsDeListeToDo")
+
+        } else {
+            // Gérer le cas où le tableau est vide ou selectedItem est invalide
 
         }
     }
