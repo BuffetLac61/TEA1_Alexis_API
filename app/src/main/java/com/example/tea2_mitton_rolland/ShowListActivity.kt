@@ -3,6 +3,7 @@ package com.example.tea1_v01
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Paint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -190,8 +191,7 @@ class ShowListActivity : AppCompatActivity(), ItemAdapter.OnItemCheckListener {
         val pseudoActif = intent.getStringExtra("pseudoActif")
         val selectedListe = intent.getIntExtra("selectedItem", -1) //Numéro de la ListeToDo séléctionnée dans ChoixListeActivity
 
-
-        ListdeProfilsDeListeToDo = getProfilListeToDoList()
+          ListdeProfilsDeListeToDo = getProfilListeToDoList()
 
         val profilActif = findProfilListeToDoByLogin(ListdeProfilsDeListeToDo, pseudoActif!!)!!
         val todoListActive = profilActif.getMesListesToDo().get(selectedListe)

@@ -1,5 +1,6 @@
 package com.example.tea1_v01
 
+import android.graphics.Paint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -69,6 +70,7 @@ class ItemAdapter(//Remplace DropdownAdapter2
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 item.setFait(isChecked)
                 onItemCheckListener.onItemChecked(item, isChecked)
+
             }
         }
 
