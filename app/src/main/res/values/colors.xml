@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primaryColor">#34495E</color> <!-- Couleur principale -->
-    <color name="accentColor">#F9BF3B</color> <!-- Couleur d'accentuation -->
+    <color name="accentColor">#FFA500</color>
     <color name="backgroundColor">#FFFFFF</color> <!-- Couleur de fond -->
     <color name="textColorPrimary">#333333</color> <!-- Couleur du texte primaire -->
     <color name="textColorSecondary">#666666</color> <!-- Couleur du texte secondaire -->
@@ -13,6 +13,7 @@
     <color name="textColorPrimaryDark">#FFFFFF</color> <!-- Couleur du texte primaire en mode sombre -->
     <color name="textColorSecondaryDark">#CCCCCC</color> <!-- Couleur du texte secondaire en mode sombre -->
     <color name="dividerColorDark">#999999</color> <!-- Couleur de la ligne de séparation en mode sombre -->
+    <!-- Couleur principale (adaptée au mode sombre ou clair) -->
 
 
 </resources>

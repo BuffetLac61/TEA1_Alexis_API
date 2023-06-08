@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:text="Titre"
         android:textSize="20sp"
-        android:textColor="@color/textColorPrimary"
         android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
         android:padding="8dp"

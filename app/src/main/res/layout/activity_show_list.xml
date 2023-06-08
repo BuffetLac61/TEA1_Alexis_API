@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:text="Titre"
         android:textSize="20sp"
-        android:textColor="@color/textColorPrimary"
         android:textStyle="bold"
         android:fontFamily="sans-serif-medium"
         android:padding="8dp"
@@ -44,7 +43,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/textColorPrimaryDark"/>
 
     <!-- Barre d'édition de texte -->
     <EditText
@@ -58,7 +58,8 @@
         android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/btnOk" />
+        app:layout_constraintRight_toLeftOf="@id/btnOk"
+        android:backgroundTint="@color/accentColor"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewShowActivity"
@@ -68,6 +69,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnOk"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
+
         />
 
 

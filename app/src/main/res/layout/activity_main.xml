@@ -45,6 +45,7 @@
         android:text="@string/ok"
         android:textColorHighlight="@color/accentColor"
         android:backgroundTint="@color/primaryColor"
+        android:textColor="@color/textColorPrimaryDark"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

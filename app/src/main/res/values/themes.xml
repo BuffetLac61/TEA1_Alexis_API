@@ -1,6 +1,6 @@
 <resources>
     <!-- Thème de votre application -->
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <!-- Couleur principale de l'application -->
         <item name="colorPrimary">@color/primaryColor</item>

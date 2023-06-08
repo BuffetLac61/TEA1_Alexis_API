@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:checked="false"
+            android:buttonTint="@color/accentColor"
             android:backgroundTint="@color/accentColor"
             />
 
@@ -29,7 +30,6 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="Liste 1"
-            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             android:paddingStart="12dp"
             android:paddingTop="12dp"
