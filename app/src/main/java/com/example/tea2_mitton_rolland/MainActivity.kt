@@ -2,10 +2,14 @@ package com.example.tea1_v01
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -34,8 +38,17 @@ class MainActivity : BaseActivity() {
         setSupportActionBar(toolbar)
 
 
+
         editTextPseudo = findViewById(R.id.editTextPseudo)
         buttonOk = findViewById(R.id.buttonOk)
+
+
+        if(isNetworkAvailable()){
+            buttonOk.visibility = View.VISIBLE
+            buttonOk.isEnabled = true
+            Log.i("PMR","[NETWORK] connection sucessfull")
+        }
+        else buttonOk.visibility = View.GONE
 
         buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
@@ -152,6 +165,23 @@ class MainActivity : BaseActivity() {
         return(ListePseudo)
     }
 
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-}
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
+                ?: return false
+
+            actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            @Suppress("DEPRECATION")
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            @Suppress("DEPRECATION")
+            activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+
+
+}}
 

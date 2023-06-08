@@ -22,5 +22,6 @@
     <string name="todo">TODO</string>
     <string name="nouvelle_liste">Nouvelle Liste</string>
     <string name="nouvelle_Item">Nouvel Item</string>
+    <string name="mot_de_passe">Mot de passe</string>
     />
 </resources>
