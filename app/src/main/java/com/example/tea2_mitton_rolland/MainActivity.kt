@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.google.gson.Gson
@@ -29,6 +30,10 @@ class MainActivity : BaseActivity() {
     private lateinit var currentPseudo :String
     private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
 
+    private lateinit var IndicatoOffline: TextView
+    private lateinit var IndicatoOnline: TextView
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -42,13 +47,25 @@ class MainActivity : BaseActivity() {
         editTextPseudo = findViewById(R.id.editTextPseudo)
         buttonOk = findViewById(R.id.buttonOk)
 
+        //Gestion de l'indice d'accès à internet
+        IndicatoOnline = findViewById(R.id.IndicatoOnline)
+        IndicatoOnline.visibility = View.INVISIBLE
+        IndicatoOffline = findViewById(R.id.IndicatoOffline)
+
+
 
         if(isNetworkAvailable()){
             buttonOk.visibility = View.VISIBLE
             buttonOk.isEnabled = true
             Log.i("PMR","[NETWORK] connection sucessfull")
+            IndicatoOffline.visibility = View.INVISIBLE
+            IndicatoOnline.visibility = View.VISIBLE
+
+
         }
-        else buttonOk.visibility = View.GONE
+        else {
+            buttonOk.visibility = View.GONE
+        }
 
         buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
