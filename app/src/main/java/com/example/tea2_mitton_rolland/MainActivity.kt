@@ -2,12 +2,17 @@ package com.example.tea1_v01
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.google.gson.Gson
@@ -25,6 +30,10 @@ class MainActivity : BaseActivity() {
     private lateinit var currentPseudo :String
     private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
 
+    private lateinit var IndicatoOffline: TextView
+    private lateinit var IndicatoOnline: TextView
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -34,8 +43,29 @@ class MainActivity : BaseActivity() {
         setSupportActionBar(toolbar)
 
 
+
         editTextPseudo = findViewById(R.id.editTextPseudo)
         buttonOk = findViewById(R.id.buttonOk)
+
+        //Gestion de l'indice d'accès à internet
+        IndicatoOnline = findViewById(R.id.IndicatoOnline)
+        IndicatoOnline.visibility = View.INVISIBLE
+        IndicatoOffline = findViewById(R.id.IndicatoOffline)
+
+
+
+        if(isNetworkAvailable()){
+            buttonOk.visibility = View.VISIBLE
+            buttonOk.isEnabled = true
+            Log.i("PMR","[NETWORK] connection sucessfull")
+            IndicatoOffline.visibility = View.INVISIBLE
+            IndicatoOnline.visibility = View.VISIBLE
+
+
+        }
+        else {
+            buttonOk.visibility = View.GONE
+        }
 
         buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
@@ -152,6 +182,23 @@ class MainActivity : BaseActivity() {
         return(ListePseudo)
     }
 
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-}
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
+                ?: return false
+
+            actNw.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            @Suppress("DEPRECATION")
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            @Suppress("DEPRECATION")
+            activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+
+
+}}
 
