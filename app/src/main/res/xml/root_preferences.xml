@@ -8,8 +8,18 @@
             app:summary="Remove all previously entered,\nThis action is NOT reversible">
         </Preference>
 
+    </PreferenceCategory>
 
-</PreferenceCategory>
+    <PreferenceCategory app:title="@string/messages_header2">
 
+        <EditTextPreference
+            app:key="apiUrlInput"
+            app:title="URL de l'API"
+            app:summary="Edition de l’url de base de l’API"
+            app:dialogTitle="Saisie de texte"
+            app:defaultValue="http://tomnab.fr/todo-api/" />
+
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
