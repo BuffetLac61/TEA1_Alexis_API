@@ -1,5 +1,6 @@
 package com.example.tea1_v01
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -15,14 +16,22 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.android.volley.Request
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.google.gson.JsonObject
+import org.json.JSONObject
 
 
 class MainActivity : BaseActivity() {
 
     private lateinit var toolbar: Toolbar
     private lateinit var editTextPseudo: EditText
+    private lateinit var editTextPassword: EditText
     private lateinit var buttonOk: Button
     private var pseudoList: ArrayList<String> = ArrayList()
     private var pseudoList2: ArrayList<String> = ArrayList()
@@ -33,7 +42,9 @@ class MainActivity : BaseActivity() {
     private lateinit var IndicatoOffline: TextView
     private lateinit var IndicatoOnline: TextView
 
+    var hash = ""
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -42,16 +53,29 @@ class MainActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
+        var hash = ""
+        var url = "http://tomnab.fr/todo-api/authenticate?user=tom&password=web"
+        apiCall(url, object : ApiResponseCallback {
+            override fun onSuccess(response: JSONObject) {
+                // Gérez la réponse réussie ici
+                hash = response["hash"].toString()
+                Log.i("Volley",hash)
 
+            }
+
+            override fun onError(error: VolleyError) {
+                // Gérez l'erreur ici
+            }
+        })
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
+        editTextPassword = findViewById(R.id.editTextPassword)
         buttonOk = findViewById(R.id.buttonOk)
 
         //Gestion de l'indice d'accès à internet
         IndicatoOnline = findViewById(R.id.IndicatoOnline)
         IndicatoOnline.visibility = View.INVISIBLE
         IndicatoOffline = findViewById(R.id.IndicatoOffline)
-
 
 
         if(isNetworkAvailable()){
@@ -70,12 +94,15 @@ class MainActivity : BaseActivity() {
         buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
             val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
+            val password = editTextPassword.text.toString()
 
 
 
-            if(pseudo!="") { //on vérifie qu'il y ai bien un nom rentré
+            if(pseudo!="" && password!="") {
 
-                loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
+                //on vérifie qu'il y ait bien un nom et un mot de passe rentré
+
+                /*loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
                 ListdeProfilsDeListeToDo = getProfilListeToDoList() //charge la liste des profils
                 pseudoList2 = getProfilListeToDoListAsString(ListdeProfilsDeListeToDo)
 
@@ -102,18 +129,37 @@ class MainActivity : BaseActivity() {
 
                 editTextPseudo.hint = pseudo
 
+                */
+
+
+
                 //puis ouvrir l'activité ChoixListActivity
-                val intent = Intent(this, ChoixListActivity::class.java)
-                intent.putExtra("pseudoActif", pseudo)
-                Log.i("PMR", "[OPENED]ChoixListActivity")
+                //val intent = Intent(this, ChoixListActivity::class.java)
+                //intent.putExtra("pseudoActif", pseudo)
+                //Log.i("PMR", "[OPENED]ChoixListActivity")
 
-                startActivity(intent)
+                //startActivity(intent)
+
+                apiCall("http://tomnab.fr/todo-api/user", object : ApiResponseCallback {
+                    override fun onSuccess(response: JSONObject) {}
+                    override fun onError(error: VolleyError) {}})
             } //si l'utilisateur ne rentre pas de pseudo
-
-            else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo", Toast.LENGTH_SHORT).show()
-
+            else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
         }
+
     }
+
+
+
+     /////////
+    // TEA2 //
+    /////////
+
+     /////////
+    // TEA2 //
+    /////////
+
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //création de la toolbar à partir de menu_main.xml
@@ -198,7 +244,28 @@ class MainActivity : BaseActivity() {
             @Suppress("DEPRECATION")
             activeNetworkInfo != null && activeNetworkInfo.isConnected
         }
+    }
 
+    fun apiCall(url: String, callback: ApiResponseCallback) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url, null,
+            { response ->
+                Log.i("Volley", "ça marche ! Réponse : " + response.toString())
+                callback.onSuccess(response)
+            },
+            { error ->
+                Log.i("Volley", error.toString())
+                callback.onError(error)
+            })
 
-}}
+        requestQueue.add(jsonObjectRequest)
+    }
+
+    interface ApiResponseCallback {
+        fun onSuccess(response: JSONObject)
+        fun onError(error: VolleyError)
+    }
+
+}
 

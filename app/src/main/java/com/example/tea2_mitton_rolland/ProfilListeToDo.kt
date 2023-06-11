@@ -1,16 +1,16 @@
 package com.example.tea1_v01
-
 import android.os.Parcel
-
 
 class ProfilListeToDo {
     var login: String? = null
+    var password: String? = null
         private set
     private var mesListeToDo: MutableList<ListeToDo> = arrayListOf()
 
 
-    constructor(login: String?) {
+    constructor(login: String?, password: String?) {
         this.login=login
+        this.password=password
     }
 
     constructor(login: String?, mesListeToDo: MutableList<ListeToDo>) {
