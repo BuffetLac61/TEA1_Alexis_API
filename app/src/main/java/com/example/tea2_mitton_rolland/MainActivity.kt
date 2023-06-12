@@ -360,11 +360,15 @@ class MainActivity : BaseActivity() {
     // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
     fun getHashFromSharedPref(): String {
         val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString("hashCode", "")
-        val type = object : TypeToken<String>() {}.type
-        return (gson.fromJson(json, type) )
+        if (sharedPreferences.contains("hashCode")){
+            val gson = Gson()
+            val json = sharedPreferences.getString("hashCode", "")
+            val type = object : TypeToken<String>() {}.type
+            return (gson.fromJson(json, type) )
+        }
+        else return ""
     }
+
 
     fun apiCallGetUser() {
 
@@ -376,8 +380,12 @@ class MainActivity : BaseActivity() {
 
         val request = object : StringRequest(Method.GET, url,
             Response.Listener<String> { response ->
-                //val users = response["users"].toString()
-                Log.i("Volley", "Appel des users réussie : $response[\"users\"]")
+                // Convertir la chaîne de caractères JSON en un objet JSON
+                val jsonResponse = JSONObject(response)
+
+                // Récupérer le hash du JSON
+                val users = jsonResponse.getString("users")
+                Log.i("Volley", "Appel des users réussie : $users")
             },
             Response.ErrorListener { error ->
                 Log.i("Volley", error.toString())
