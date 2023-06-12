@@ -153,23 +153,18 @@ class MainActivity : BaseActivity() {
 
                 Log.i("Volley","jjjjj"+hash)
 
-                val url = "http://tomnab.fr/todo-api/lists?hash=$hash"
-                val hashValue = hash
+                val url = "http://tomnab.fr/todo-api/users"
+                val headers = HashMap<String, String>()
+                headers["hash"] = hash
 
-                val request = object : StringRequest(
-                    Method.GET, url,
-                    Response.Listener{ response ->
-                        Log.i("Volley","success mdr")
-                        // Traitement de la réponse ici
+                val request = object : StringRequest(Method.GET, url,
+                    Response.Listener<String> { response ->
+                        Log.i("Volley", response)
                     },
                     Response.ErrorListener { error ->
-                        val errorMessage = error?.networkResponse?.data?.toString(Charsets.UTF_8) ?: "Erreur inconnue"
-                        Log.i("Volley", "Erreur lors de la requête API : $errorMessage")
-                        // Gestion des erreurs ici
+                        Log.i("Volley", error.toString())
                     }) {
                     override fun getHeaders(): MutableMap<String, String> {
-                        val headers = HashMap<String, String>()
-                        headers["hash"] = hashValue
                         return headers
                     }
                 }
