@@ -147,32 +147,11 @@ class MainActivity : BaseActivity() {
 
                 //startActivity(intent)
 
+                apiCallGetUser()
 
-                Log.i("Volley","Voici le hash"+hash)
-
-                val url = "http://tomnab.fr/todo-api/users"
-                val headers = HashMap<String, String>()
-                headers["hash"] = hash
-
-                val request = object : StringRequest(Method.GET, url,
-                    Response.Listener<String> { response ->
-                        Log.i("Volley", response)
-                    },
-                    Response.ErrorListener { error ->
-                        Log.i("Volley", error.toString())
-                    }) {
-                    override fun getHeaders(): MutableMap<String, String> {
-                        return headers
-                    }
-                }
-
-                val queue = Volley.newRequestQueue(v.context)
-                queue.add(request)
             } //si l'utilisateur ne rentre pas de pseudo
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
 
-
-            apiCallGetUser()
         }
 
     }
