@@ -15,7 +15,6 @@
         app:title="SettingsActivity"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:contentInsetEnd="16dp"
-
         app:layout_constraintBaseline_toTopOf="parent"/>
 
 

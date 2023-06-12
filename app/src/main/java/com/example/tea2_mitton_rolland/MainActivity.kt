@@ -80,13 +80,7 @@ class MainActivity : BaseActivity() {
 
 
 
-        var url = "http://tomnab.fr/todo-api/authenticate?user=tom&password=web"
-        firstApiCall(url)
 
-        apiCallGetUser()
-
-        var users = getUsersFromSharedPref()
-        Log.i("Volley","Contenu de users : "+users)
 
 
 
@@ -154,6 +148,13 @@ class MainActivity : BaseActivity() {
 
                 //startActivity(intent)
 
+                var url = "http://tomnab.fr/todo-api/authenticate?user=$pseudo&password=$password"
+                firstApiCall(url,pseudo)
+
+                apiCallGetUser()
+
+                var users = getUsersFromSharedPref()
+                Log.i("Volley","Contenu de users : "+users)
 
             } //si l'utilisateur ne rentre pas de pseudo
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
@@ -186,7 +187,7 @@ class MainActivity : BaseActivity() {
     }
 
 
-     /////////
+     ////////
     // TEA2 //
     /////////
 
@@ -305,7 +306,7 @@ class MainActivity : BaseActivity() {
 //////////////////////////////////////////////////////////////////////////////
 
 
-    fun firstApiCall(url: String) {
+    fun firstApiCall(url: String,pseudo:String) {
 
         Log.i("Volley", "Premier Appel ...")
         val headers = HashMap<String, String>()
@@ -319,10 +320,19 @@ class MainActivity : BaseActivity() {
                 val hash = jsonResponse.getString("hash")
 
                 Log.i("Volley", "Premier appel : ça marche ! Hash : $hash")
+                Toast.makeText(applicationContext, "Connexion réussie", Toast.LENGTH_SHORT).show()
                 saveHashToSharedPref(hash)
+
+                //puis ouvrir l'activité ChoixListActivity
+                val intent = Intent(this, ChoixListActivity::class.java)
+                intent.putExtra("pseudoActif", pseudo)
+                Log.i("PMR", "[OPENED]ChoixListActivity")
+                startActivity(intent)
             },
             Response.ErrorListener { error ->
                 Log.i("Volley", error.toString())
+                Toast.makeText(applicationContext, "Mauvais pseudo ou mot de passe", Toast.LENGTH_SHORT).show()
+
             }) {
             override fun getHeaders(): MutableMap<String, String> {
                 return headers
@@ -431,8 +441,5 @@ class MainActivity : BaseActivity() {
 
 
     }
-
-
-
 }
 
