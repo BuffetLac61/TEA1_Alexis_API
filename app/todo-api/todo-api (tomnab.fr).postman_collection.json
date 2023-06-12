@@ -1,0 +1,815 @@
+{
+	"info": {
+		"_postman_id": "86badb83-1fbe-49ca-9dad-98f4c59f3dd9",
+		"name": "todo-api (tomnab.fr)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7838128"
+	},
+	"item": [
+		{
+			"name": "Authentification",
+			"item": [
+				{
+					"name": "http://tomnab.fr/todo-api/authenticate?user=tom&password=web",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/authenticate?user=tom&password=web",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"authenticate"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "tom"
+								},
+								{
+									"key": "password",
+									"value": "web"
+								}
+							]
+						},
+						"description": "Connexion auprès de l'API\nRenvoie un hash sans délai d'expiration"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/authenticate",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/authenticate",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"authenticate"
+							]
+						},
+						"description": "Régénération du hash de l'utilisateur courant\nRenvoie un nouveau hash"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "http://tomnab.fr/todo-api/users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users"
+							]
+						},
+						"description": "Liste des utilisateurs"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/2",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"2"
+							]
+						},
+						"description": "Données de l'utilisateur 2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users?pseudo=toto&pass=tata",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users?pseudo=toto&pass=tata",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "pseudo",
+									"value": "toto"
+								},
+								{
+									"key": "pass",
+									"value": "tata"
+								}
+							]
+						},
+						"description": "Création de l'utilisateur toto (mot de passe tata)\n\nOn ne peut créer un utilisateur si son login existe déjà"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/379?pass=web",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/379?pass=web",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"379"
+							],
+							"query": [
+								{
+									"key": "pass",
+									"value": "web"
+								}
+							]
+						},
+						"description": "Modification du mot de passe de l'utilisateur d'identifiant 379\n\nOn ne peut modifier les mots de passe de tom et isa"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/379",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/379",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"379"
+							]
+						},
+						"description": "Suppression de l'utilisateur d'identifiant 379\n\nOn ne peut supprimer un user que si on est connecté avec son identité"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lists",
+			"item": [
+				{
+					"name": "http://tomnab.fr/todo-api/users/2/lists?label=Liste 3",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/2/lists?label=Liste 3",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"2",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "Liste 3"
+								}
+							]
+						},
+						"description": "Création d'une nouvelle liste pour l'utilisateur 2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists?label=list3_tom",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "hash",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists?label=nom de la liste",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "nom de la liste"
+								}
+							]
+						},
+						"description": "Création d'une liste pour l'utilisateur connecté"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "hash",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Récupération des listes de l'utilisateur courant"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/739",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/739",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"739"
+							]
+						},
+						"description": "Informations concernant la liste dont l'identifiant vaut 739 Elle doit appartenir à l'utilisateur connecté"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/2/lists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/2/lists",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"2",
+								"lists"
+							]
+						},
+						"description": "Listes de l'utilisateur dont l'identifiant vaut 2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/1?label=liste 1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/1?label=liste 1",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"1"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "liste 1"
+								}
+							]
+						},
+						"description": "Modification du label de la liste 1 de l'utilisateur connecté"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/2/lists/3?label=Liste 1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/2/lists/3?label=Liste 1",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"2",
+								"lists",
+								"3"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "Liste 1"
+								}
+							]
+						},
+						"description": "Modification du label de la liste d'identifiant 3 de l'utilisateur d'identifiant 2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/users/2/lists/5",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/users/2/lists/5",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"users",
+								"2",
+								"lists",
+								"5"
+							]
+						},
+						"description": "Suppression de la liste d'identifiant 5 de l'utilisateurd'identifiant 2"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/7",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/7",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"7"
+							]
+						},
+						"description": "Suppression de la liste d'identifiant 7 de l'utilisateur connecté"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Items",
+			"item": [
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items"
+							]
+						},
+						"description": "Items de la liste 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items/4",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items/4",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items",
+								"4"
+							]
+						},
+						"description": "Item d'identifiant 4 de la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items?label=Nouvel item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items?label=Nouvel item",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "Nouvel item"
+								}
+							]
+						},
+						"description": "Création d'un nouvel item dans la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items?label=Nouvel item 6&url=url test",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "hash",
+								"value": "b10ab07311337e6484153b0f5793d516",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items?label=Nouvel item 6&url=url test",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items"
+							],
+							"query": [
+								{
+									"key": "label",
+									"value": "Nouvel item 6"
+								},
+								{
+									"key": "url",
+									"value": "url test"
+								}
+							]
+						},
+						"description": "Nouvel item avec url dans la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items/4?check=1",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items/4?check=1",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items",
+								"4"
+							],
+							"query": [
+								{
+									"key": "check",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Cocher ou décocher l'item d'identifiant 4 de la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items/4?label=Item 4",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items/4?label=Item 4",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items",
+								"4"
+							],
+							"query": [
+								{
+									"key": "check",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "label",
+									"value": "Item 4"
+								}
+							]
+						},
+						"description": "Changer le label de l'item d'identifiant 4 de la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/3/items/4?url=Autre url",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/3/items/4?url=Autre url",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"3",
+								"items",
+								"4"
+							],
+							"query": [
+								{
+									"key": "check",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "label",
+									"value": "Item 4",
+									"disabled": true
+								},
+								{
+									"key": "url",
+									"value": "Autre url"
+								}
+							]
+						},
+						"description": "Modifier l'url de l'item d'identifiant 4 de la liste d'identifiant 3"
+					},
+					"response": []
+				},
+				{
+					"name": "http://tomnab.fr/todo-api/lists/1/items/5",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "hash",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://tomnab.fr/todo-api/lists/1/items/5",
+							"protocol": "http",
+							"host": [
+								"tomnab",
+								"fr"
+							],
+							"path": [
+								"todo-api",
+								"lists",
+								"1",
+								"items",
+								"5"
+							]
+						},
+						"description": "Supprimer l'item d'identifiant 5 de la liste d'identifiant 1"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

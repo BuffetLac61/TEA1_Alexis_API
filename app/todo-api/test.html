@@ -1,0 +1,101 @@
+<script src="jquery-3.6.0.min.js"></script>
+<script>
+var apiRootInternet = "http://tomnab.fr/todo-api";
+var apiRootLocale = "http://localhost/APIs/todo-api/api";
+// ATTENTION : il faut rajouter /api à la route locale...
+// A suivre : PB de règles de réécriture sans doute
+var apiRoot = apiRootInternet; 
+var hash = "a_changer"; 
+
+
+$(document).ready(function(){
+	authenticate(getUsers);
+	//authenticate(getCategories);
+	//authenticate(postCategorie);
+	//postCategorie();  
+	//putCategorie(10,"Titre 2");
+});
+
+function authenticate(cbNext) {
+	$.ajax({
+		type: "POST",
+		url: apiRoot + "/authenticate",
+		headers: {"debug-data":true},
+		data: {"user":"tom","password":"web"},
+		success: function(oRep){
+		console.log(oRep); 
+		hash = oRep.hash; 
+		cbNext(); 
+	},
+	dataType: "json"
+	});
+} 
+
+function getUsers(){
+
+	$.ajax({
+		type: "GET",
+		url: apiRoot + "/users",
+		headers: {"hash":hash,"debug-data":true},
+		data: {},
+		success: function(oRep){
+		console.log(oRep);
+
+		},
+		dataType: "json"
+	});
+}
+
+function getCategories(){
+	$.ajax({
+		type: "GET",
+		url: apiRoot + "/categories",
+		headers: {"hash":hash,"debug-data":true},
+		success: function(oRep){
+			console.log(oRep);
+			var idFirst = oRep.categories[0].id; 
+		},
+		dataType: "json"
+	});
+}
+
+function postCategorie(){
+	$.ajax({
+		type: "POST",
+		url: apiRoot + "/categories",
+		headers: {"hash":hash,"debug-data":true},
+		data: {"titre":"Titre catégorie"},
+		success: function(oRep){
+		console.log(oRep);	
+		putCategorie(oRep.categorie.id,"Titre catégorie modifié");	
+	},
+	dataType: "json"
+	});
+}
+
+function putCategorie(id,titre){
+	// NB : l'envoi de données par la méthode PUT
+	// ne fonctionne pas avec la propriété .data()
+	// il faut envoyer les données en QS après l'URL
+	$.ajax({
+		type: "PUT",
+		url: apiRoot + "/categories/" + id + "?titre=" + titre,		
+		headers: {"hash":hash,"debug-data":true},
+		error : function(){
+			alert("Un erreur s'est produite ! vous devriez raffraichir le navigateur");
+		},
+		success: function(oRep){
+			console.log(oRep);
+			// On n'a pas besoin de cette réponse.. 
+			// Bonne pratique : toujours vérifier la réponse du serveur !!
+			if (! oRep.success) {
+				alert("Un erreur s'est produite ! vous devriez raffraichir le navigateur");
+			}
+	},
+	dataType: "json"
+	});
+}
+
+
+
+</script>

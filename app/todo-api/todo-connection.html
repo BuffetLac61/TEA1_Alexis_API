@@ -1,0 +1,89 @@
+<head>
+<script src="jquery-3.6.0.min.js"></script>
+
+<script>
+
+var apiRootInternet = "http://tomnab.fr/todo-api";
+var apiRootLocale = "http://localhost/APIs/todo-api/api";
+// ATTENTION : il faut rajouter /api à la route locale...
+// A suivre : PB de règles de réécriture sans doute
+var apiRoot = false;
+var hash = false; 
+
+$(document).ready(function(){
+
+	// chargement des routes d'API 
+	$("#selApiRoot").append($("<option>").html(apiRootInternet));
+	$("#selApiRoot").append($("<option>").html(apiRootLocale));
+	
+	// clic bouton login
+	$("#blocLogin .action").click(function(){
+		console.log("click login"); 
+		$.ajax({
+			type: "POST",
+			url: apiRoot + "/authenticate",
+			headers: {},
+			data: {	"user":$("#user").val(),
+						"password":$("#password").val()
+				},
+			dataType: "json",
+			success: function(oRep){
+				console.log(oRep); 
+				hash = oRep.hash; 
+				$("#blocLogin").hide();		
+				$("#blocSuivant").show("fast");		
+			},
+			error : function() {
+				console.log("erreur authenticate");
+			}
+		}); // fin ajax 
+	}); // fin click btn Login 
+	 
+	// change apiRoot active bouton login 
+	$("#selApiRoot").change(function(){
+		// on réactive le bouton login 
+		$("#blocLogin .action").prop("disabled",false);
+		apiRoot = $(this).val();
+		//console.log($("#selApiRoot option:selected").val());
+		console.log("apiroot = " + $(this).val());
+	}); // fin change apiRoot 
+		
+}); // fin ready 
+	
+</script>
+
+<style>
+	.border {border : 1px solid black; padding:3px;}
+	.hidden {display:none;}
+		
+</style>
+</head>
+
+<body>
+
+<div class="border" id="blocLogin">
+	<select id="selApiRoot">
+		<option disabled selected>Choisir la route racine de l'API</option>
+	</select>
+	<input type="text" id="user" value="tom"/>
+	<input type="password" id ="password" value="web"/>
+	<input disabled type="button" class="action" value="Login"/>
+</div>
+
+<div class="hidden" id="blocSuivant">
+It Works !
+</div>
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
