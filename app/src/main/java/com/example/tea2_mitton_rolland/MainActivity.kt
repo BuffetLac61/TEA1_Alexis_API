@@ -86,6 +86,9 @@ class MainActivity : BaseActivity() {
         apiCallGetUser()
 
         var users = getUsersFromSharedPref()
+        Log.i("Volley","Contenu de users : "+users)
+
+
 
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
@@ -373,10 +376,12 @@ class MainActivity : BaseActivity() {
     }
 
     //Sauvegarder les users dans les preferences partagées
-    fun saveUsersToSharedPref(hash:String) {
+    fun saveUsersToSharedPref(usersList:String) {
+        Log.i("Volley","[saveUsersToSharedPref] enregistrement des users dans les prefs partagées...")
         val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
         val gson = Gson()
-        val json = gson.toJson(hash)
+        Log.i("Volley","[saveUsersToSharedPref] Contenu de usersList : $usersList")
+        val json = gson.toJson(usersList)
         val editor = sharedPreferences.edit()
         editor.putString("usersList", json)
         editor.apply()
