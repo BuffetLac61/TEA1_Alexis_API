@@ -20,11 +20,18 @@ import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.JsonObject
 import org.json.JSONObject
+
+import okhttp3.*
+import java.io.IOException
+
 
 
 class MainActivity : BaseActivity() {
@@ -53,14 +60,13 @@ class MainActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
-        var hash = ""
+
         var url = "http://tomnab.fr/todo-api/authenticate?user=tom&password=web"
-        apiCall(url, object : ApiResponseCallback {
+        firstApiCall(url,object : ApiResponseCallback {
             override fun onSuccess(response: JSONObject) {
                 // Gérez la réponse réussie ici
                 hash = response["hash"].toString()
-                Log.i("Volley",hash)
-
+                saveHashToSharedPref(hash)
             }
 
             override fun onError(error: VolleyError) {
@@ -91,7 +97,9 @@ class MainActivity : BaseActivity() {
             buttonOk.visibility = View.GONE
         }
 
-        buttonOk.setOnClickListener {
+        makeGetRequest()
+
+        buttonOk.setOnClickListener {v ->
             //actions à effectuer quand on appuye sur OK
             val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
             val password = editTextPassword.text.toString()
@@ -140,15 +148,62 @@ class MainActivity : BaseActivity() {
 
                 //startActivity(intent)
 
-                apiCall("http://tomnab.fr/todo-api/user", object : ApiResponseCallback {
-                    override fun onSuccess(response: JSONObject) {}
-                    override fun onError(error: VolleyError) {}})
+
+
+
+                Log.i("Volley","jjjjj"+hash)
+
+                val url = "http://tomnab.fr/todo-api/lists?hash=$hash"
+                val hashValue = hash
+
+                val request = object : StringRequest(
+                    Method.GET, url,
+                    Response.Listener{ response ->
+                        Log.i("Volley","success mdr")
+                        // Traitement de la réponse ici
+                    },
+                    Response.ErrorListener { error ->
+                        val errorMessage = error?.networkResponse?.data?.toString(Charsets.UTF_8) ?: "Erreur inconnue"
+                        Log.i("Volley", "Erreur lors de la requête API : $errorMessage")
+                        // Gestion des erreurs ici
+                    }) {
+                    override fun getHeaders(): MutableMap<String, String> {
+                        val headers = HashMap<String, String>()
+                        headers["hash"] = hashValue
+                        return headers
+                    }
+                }
+
+                val queue = Volley.newRequestQueue(v.context)
+                queue.add(request)
             } //si l'utilisateur ne rentre pas de pseudo
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
         }
 
     }
+    private fun makeGetRequest() {
+        val url = "http://tomnab.fr/todo-api/user"
+        val hashValue = "a4d36a05d87c70f299e927f47e602fbe"
 
+        val request = object : StringRequest(
+            Method.GET, url,
+            Response.Listener<String> { response ->
+                // Traitement de la réponse ici
+            },
+            Response.ErrorListener { error ->
+                val errorMessage = error?.message ?: "Erreur inconnue"
+                Log.i("Volley", "Erreur lors de la requête API : $errorMessage")
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["hash"] = hashValue
+                return headers
+            }
+        }
+
+        val queue = Volley.newRequestQueue(this)
+        queue.add(request)
+    }
 
 
      /////////
@@ -246,7 +301,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    fun apiCall(url: String, callback: ApiResponseCallback) {
+    /*fun apiCall(url: String, callback: ApiResponseCallback) {
         val requestQueue = Volley.newRequestQueue(this)
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST, url, null,
@@ -257,15 +312,79 @@ class MainActivity : BaseActivity() {
             { error ->
                 Log.i("Volley", error.toString())
                 callback.onError(error)
-            })
+            }
+        )
+
 
         requestQueue.add(jsonObjectRequest)
+    }*/
+
+    fun firstApiCall(url: String, callback: ApiResponseCallback) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url, null,
+            { response ->
+                Log.i("Volley", "Premier appel : ça marche ! Réponse : " + response.toString())
+                callback.onSuccess(response)
+            },
+            { error ->
+                Log.i("Volley", error.toString())
+                callback.onError(error)
+            }
+        )
+        requestQueue.add(jsonObjectRequest)
     }
+
+    fun apiCall(url: String, hash: String,method:String="GET", callback: ApiResponseCallback) {
+        val requestQueue: RequestQueue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = object : JsonObjectRequest(
+            Method.GET, url, null,
+            { response ->
+                Log.i("Volley", "Premier appel : ça marche ! Réponse : " + response.toString())
+                callback.onSuccess(response)
+            },
+            { error ->
+                Log.i("Volley", error.toString())
+                callback.onError(error)
+            }){}}
+
+    /*{
+        override fun getHeaders(): MutableMap<String, String> {
+            val headers = HashMap<String, String>()
+            headers["hash"] = hash
+
+            Log.i("volley","Contenu du header :"+ headers)
+            return headers
+        }
+    }*/
+
 
     interface ApiResponseCallback {
         fun onSuccess(response: JSONObject)
         fun onError(error: VolleyError)
     }
+
+    //Sauvegarder le hash dans les preferences partagées
+    fun saveHashToSharedPref(hash:String) {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = gson.toJson(hash)
+        val editor = sharedPreferences.edit()
+        editor.putString("hashCode", json)
+        editor.apply()
+    }
+
+    // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
+    fun getHashToSharedPref(): String {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("hashCode", "")
+        val type = object : TypeToken<String>() {}.type
+        return (gson.fromJson(json, type) )
+    }
+
+
+
 
 }
 
