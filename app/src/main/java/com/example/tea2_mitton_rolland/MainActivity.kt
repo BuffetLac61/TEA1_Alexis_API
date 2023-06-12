@@ -83,6 +83,10 @@ class MainActivity : BaseActivity() {
         var url = "http://tomnab.fr/todo-api/authenticate?user=tom&password=web"
         firstApiCall(url)
 
+        apiCallGetUser()
+
+        var users = getUsersFromSharedPref()
+
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
         editTextPassword = findViewById(R.id.editTextPassword)
@@ -147,7 +151,6 @@ class MainActivity : BaseActivity() {
 
                 //startActivity(intent)
 
-                apiCallGetUser()
 
             } //si l'utilisateur ne rentre pas de pseudo
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
@@ -357,12 +360,34 @@ class MainActivity : BaseActivity() {
         editor.apply()
     }
 
-    // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
+    // Récupérer le hash depuis les préférences partagées
     fun getHashFromSharedPref(): String {
         val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
         if (sharedPreferences.contains("hashCode")){
             val gson = Gson()
             val json = sharedPreferences.getString("hashCode", "")
+            val type = object : TypeToken<String>() {}.type
+            return (gson.fromJson(json, type) )
+        }
+        else return ""
+    }
+
+    //Sauvegarder les users dans les preferences partagées
+    fun saveUsersToSharedPref(hash:String) {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = gson.toJson(hash)
+        val editor = sharedPreferences.edit()
+        editor.putString("usersList", json)
+        editor.apply()
+    }
+
+    // Récupérer les users depuis les préférences partagées
+    fun getUsersFromSharedPref(): String {
+        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        if (sharedPreferences.contains("usersList")){
+            val gson = Gson()
+            val json = sharedPreferences.getString("usersList", "")
             val type = object : TypeToken<String>() {}.type
             return (gson.fromJson(json, type) )
         }
@@ -386,6 +411,7 @@ class MainActivity : BaseActivity() {
                 // Récupérer le hash du JSON
                 val users = jsonResponse.getString("users")
                 Log.i("Volley", "Appel des users réussie : $users")
+                saveUsersToSharedPref(users)
             },
             Response.ErrorListener { error ->
                 Log.i("Volley", error.toString())
@@ -397,6 +423,7 @@ class MainActivity : BaseActivity() {
 
         val queue = Volley.newRequestQueue(this)
         queue.add(request)
+
 
     }
 
