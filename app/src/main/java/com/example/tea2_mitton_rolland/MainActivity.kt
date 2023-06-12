@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.android.volley.Request
@@ -26,12 +25,12 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.google.gson.JsonObject
 import org.json.JSONObject
+import android.os.Handler
+import android.os.Looper
+
 
 import okhttp3.*
-import java.io.IOException
-
 
 
 class MainActivity : BaseActivity() {
@@ -45,6 +44,23 @@ class MainActivity : BaseActivity() {
 
     private lateinit var currentPseudo :String
     private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val refreshRunnable = Runnable {
+        // Mettez ici le code à exécuter pour rafraîchir la connexion
+        //affichage de Ok et de "online" si acces a internet
+        if(isNetworkAvailable()){
+            buttonOk.visibility = View.VISIBLE
+            buttonOk.isEnabled = true
+            Log.i("PMR","[NETWORK] connection sucessfull")
+            IndicatoOffline.visibility = View.INVISIBLE
+            IndicatoOnline.visibility = View.VISIBLE
+
+        }
+        else {
+            buttonOk.visibility = View.GONE
+        }
+    }
 
     private lateinit var IndicatoOffline: TextView
     private lateinit var IndicatoOnline: TextView
@@ -60,19 +76,13 @@ class MainActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
+        startRefreshing()
+
+
 
         var url = "http://tomnab.fr/todo-api/authenticate?user=tom&password=web"
-        firstApiCall(url,object : ApiResponseCallback {
-            override fun onSuccess(response: JSONObject) {
-                // Gérez la réponse réussie ici
-                hash = response["hash"].toString()
-                saveHashToSharedPref(hash)
-            }
+        firstApiCall(url)
 
-            override fun onError(error: VolleyError) {
-                // Gérez l'erreur ici
-            }
-        })
 
         editTextPseudo = findViewById(R.id.editTextPseudo)
         editTextPassword = findViewById(R.id.editTextPassword)
@@ -84,20 +94,9 @@ class MainActivity : BaseActivity() {
         IndicatoOffline = findViewById(R.id.IndicatoOffline)
 
 
-        if(isNetworkAvailable()){
-            buttonOk.visibility = View.VISIBLE
-            buttonOk.isEnabled = true
-            Log.i("PMR","[NETWORK] connection sucessfull")
-            IndicatoOffline.visibility = View.INVISIBLE
-            IndicatoOnline.visibility = View.VISIBLE
 
 
-        }
-        else {
-            buttonOk.visibility = View.GONE
-        }
-
-        makeGetRequest()
+        //makeGetRequest()
 
         buttonOk.setOnClickListener {v ->
             //actions à effectuer quand on appuye sur OK
@@ -149,9 +148,7 @@ class MainActivity : BaseActivity() {
                 //startActivity(intent)
 
 
-
-
-                Log.i("Volley","jjjjj"+hash)
+                Log.i("Volley","Voici le hash"+hash)
 
                 val url = "http://tomnab.fr/todo-api/users"
                 val headers = HashMap<String, String>()
@@ -173,12 +170,15 @@ class MainActivity : BaseActivity() {
                 queue.add(request)
             } //si l'utilisateur ne rentre pas de pseudo
             else Toast.makeText(applicationContext, "Veuillez rentrer un pseudo et un mot de passe", Toast.LENGTH_SHORT).show()
+
+
+            apiCallGetUser()
         }
 
     }
     private fun makeGetRequest() {
         val url = "http://tomnab.fr/todo-api/user"
-        val hashValue = "a4d36a05d87c70f299e927f47e602fbe"
+        val hashValue = getHashFromSharedPref()
 
         val request = object : StringRequest(
             Method.GET, url,
@@ -278,6 +278,17 @@ class MainActivity : BaseActivity() {
         return(ListePseudo)
     }
 
+    /////////
+    // TEA2 //
+    /////////
+
+    /////////
+    // TEA2 //
+    /////////
+
+//////////////////////////////////////////////////////////////////////////////
+    //Partie qui gère l'affichage du "Online"
+//////////////////////////////////////////////////////////////////////////////
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -295,40 +306,49 @@ class MainActivity : BaseActivity() {
             activeNetworkInfo != null && activeNetworkInfo.isConnected
         }
     }
-
-    /*fun apiCall(url: String, callback: ApiResponseCallback) {
-        val requestQueue = Volley.newRequestQueue(this)
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, url, null,
-            { response ->
-                Log.i("Volley", "ça marche ! Réponse : " + response.toString())
-                callback.onSuccess(response)
-            },
-            { error ->
-                Log.i("Volley", error.toString())
-                callback.onError(error)
-            }
-        )
-
-
-        requestQueue.add(jsonObjectRequest)
-    }*/
-
-    fun firstApiCall(url: String, callback: ApiResponseCallback) {
-        val requestQueue = Volley.newRequestQueue(this)
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, url, null,
-            { response ->
-                Log.i("Volley", "Premier appel : ça marche ! Réponse : " + response.toString())
-                callback.onSuccess(response)
-            },
-            { error ->
-                Log.i("Volley", error.toString())
-                callback.onError(error)
-            }
-        )
-        requestQueue.add(jsonObjectRequest)
+    private fun startRefreshing() {
+        handler.postDelayed(refreshRunnable, 1000) // Démarrer le rafraîchissement toutes les 1 secondes
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        stopRefreshing()
+    }
+    private fun stopRefreshing() {
+        handler.removeCallbacks(refreshRunnable) // Arrêter le rafraîchissement
+    }
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+
+    fun firstApiCall(url: String) {
+
+        Log.i("Volley", "Premier Appel ...")
+        val headers = HashMap<String, String>()
+
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener<String> { response ->
+                // Convertir la chaîne de caractères JSON en un objet JSON
+                val jsonResponse = JSONObject(response)
+
+                // Récupérer le hash du JSON
+                val hash = jsonResponse.getString("hash")
+
+                Log.i("Volley", "Premier appel : ça marche ! Hash : $hash")
+                saveHashToSharedPref(hash)
+            },
+            Response.ErrorListener { error ->
+                Log.i("Volley", error.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return headers
+            }
+        }
+
+
+        val queue = Volley.newRequestQueue(this)
+        queue.add(request)
+        }
+
 
     fun apiCall(url: String, hash: String,method:String="GET", callback: ApiResponseCallback) {
         val requestQueue: RequestQueue = Volley.newRequestQueue(this)
@@ -342,17 +362,6 @@ class MainActivity : BaseActivity() {
                 Log.i("Volley", error.toString())
                 callback.onError(error)
             }){}}
-
-    /*{
-        override fun getHeaders(): MutableMap<String, String> {
-            val headers = HashMap<String, String>()
-            headers["hash"] = hash
-
-            Log.i("volley","Contenu du header :"+ headers)
-            return headers
-        }
-    }*/
-
 
     interface ApiResponseCallback {
         fun onSuccess(response: JSONObject)
@@ -370,7 +379,7 @@ class MainActivity : BaseActivity() {
     }
 
     // Récupérer une liste de ProfilListeToDo depuis les préférences partagées
-    fun getHashToSharedPref(): String {
+    fun getHashFromSharedPref(): String {
         val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("hashCode", "")
@@ -378,6 +387,31 @@ class MainActivity : BaseActivity() {
         return (gson.fromJson(json, type) )
     }
 
+    fun apiCallGetUser() {
+
+        Log.i("Volley", "Appel des Users ...")
+
+        val url = "http://tomnab.fr/todo-api/users"
+        val headers = HashMap<String, String>()
+        headers["hash"] = getHashFromSharedPref()
+
+        val request = object : StringRequest(Method.GET, url,
+            Response.Listener<String> { response ->
+                //val users = response["users"].toString()
+                Log.i("Volley", "Appel des users réussie : $response[\"users\"]")
+            },
+            Response.ErrorListener { error ->
+                Log.i("Volley", error.toString())
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                return headers
+            }
+        }
+
+        val queue = Volley.newRequestQueue(this)
+        queue.add(request)
+
+    }
 
 
 
