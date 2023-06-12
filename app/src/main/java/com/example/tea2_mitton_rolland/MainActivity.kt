@@ -46,21 +46,7 @@ class MainActivity : BaseActivity() {
     private lateinit var ListdeProfilsDeListeToDo : MutableList<ProfilListeToDo>
 
     private val handler = Handler(Looper.getMainLooper())
-    private val refreshRunnable = Runnable {
-        // Mettez ici le code à exécuter pour rafraîchir la connexion
-        //affichage de Ok et de "online" si acces a internet
-        if(isNetworkAvailable()){
-            buttonOk.visibility = View.VISIBLE
-            buttonOk.isEnabled = true
-            Log.i("PMR","[NETWORK] connection sucessfull")
-            IndicatoOffline.visibility = View.INVISIBLE
-            IndicatoOnline.visibility = View.VISIBLE
 
-        }
-        else {
-            buttonOk.visibility = View.GONE
-        }
-    }
 
     private lateinit var IndicatoOffline: TextView
     private lateinit var IndicatoOnline: TextView
@@ -76,83 +62,25 @@ class MainActivity : BaseActivity() {
         toolbar = findViewById(R.id.toolbarParametres)
         setSupportActionBar(toolbar)
 
-        startRefreshing()
-
-
-
-
-
-
-
-
         editTextPseudo = findViewById(R.id.editTextPseudo)
         editTextPassword = findViewById(R.id.editTextPassword)
         buttonOk = findViewById(R.id.buttonOk)
 
         //Gestion de l'indice d'accès à internet
         IndicatoOnline = findViewById(R.id.IndicatoOnline)
-        IndicatoOnline.visibility = View.INVISIBLE
         IndicatoOffline = findViewById(R.id.IndicatoOffline)
 
+        startRefreshing()
 
-
-
-        //makeGetRequest()
-
-        buttonOk.setOnClickListener {v ->
+        //Lorsqu'on appuie sur le bouton
+        buttonOk.setOnClickListener {
             //actions à effectuer quand on appuye sur OK
             val pseudo = editTextPseudo.text.toString() //On récupère le pseudo qui est dans le champ
             val password = editTextPassword.text.toString()
-
-
-
             if(pseudo!="" && password!="") {
-
-                //on vérifie qu'il y ait bien un nom et un mot de passe rentré
-
-                /*loadPseudoListFromSharedPreferences()//charge la liste des pseudos à pertir des préférences partagées
-                ListdeProfilsDeListeToDo = getProfilListeToDoList() //charge la liste des profils
-                pseudoList2 = getProfilListeToDoListAsString(ListdeProfilsDeListeToDo)
-
-                if (pseudoList2.contains(pseudo)) {
-                    currentPseudo = pseudo
-
-                } else {
-                    pseudoList2.add(pseudo) //on ajoute le pseudo dans la liste
-                    currentPseudo = pseudo
-                    val profil = ProfilListeToDo(pseudo)
-                    (ListdeProfilsDeListeToDo).add(profil)
-                }
-
-                //editTextPseudo.clearComposingText() //on efface le pseudo ? (ne fonctionne pas)
-
-                // Faire quelque chose avec le pseudo, par exemple l'afficher dans le Logcat
-                Log.d("MainActivity", "Pseudo: $pseudo")
-
-                savePseudoListToSharedPreferences() //on enregistre la liste de pseudo
-                saveProfilListeToDoList(ListdeProfilsDeListeToDo)
-                Log.d("PMR", "Contenu de pseudoList : ${pseudoList.toString()}")//on l'affiche
-                Log.d("PMR", "Contenu de pseudoList2 : ${pseudoList2.toString()}")//on l'affiche
-
-
-                editTextPseudo.hint = pseudo
-
-                */
-
-
-
-                //puis ouvrir l'activité ChoixListActivity
-                //val intent = Intent(this, ChoixListActivity::class.java)
-                //intent.putExtra("pseudoActif", pseudo)
-                //Log.i("PMR", "[OPENED]ChoixListActivity")
-
-                //startActivity(intent)
-
                 var url = "http://tomnab.fr/todo-api/authenticate?user=$pseudo&password=$password"
                 firstApiCall(url,pseudo)
-
                 apiCallGetUser()
-
                 var users = getUsersFromSharedPref()
                 Log.i("Volley","Contenu de users : "+users)
 
@@ -185,18 +113,6 @@ class MainActivity : BaseActivity() {
         val queue = Volley.newRequestQueue(this)
         queue.add(request)
     }
-
-
-     ////////
-    // TEA2 //
-    /////////
-
-     /////////
-    // TEA2 //
-    /////////
-
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         //création de la toolbar à partir de menu_main.xml
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -263,18 +179,16 @@ class MainActivity : BaseActivity() {
         }
         return(ListePseudo)
     }
-
-    /////////
-    // TEA2 //
-    /////////
-
-    /////////
-    // TEA2 //
-    /////////
-
 //////////////////////////////////////////////////////////////////////////////
     //Partie qui gère l'affichage du "Online"
 //////////////////////////////////////////////////////////////////////////////
+private val refreshRunnable = object : Runnable {
+    override fun run() {
+        refreshConnectionStatus()
+        // Répéter l'appel après un certain délai (par exemple, toutes les 5 secondes)
+        handler.postDelayed(this, 5000)
+    }
+}
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -301,6 +215,28 @@ class MainActivity : BaseActivity() {
     }
     private fun stopRefreshing() {
         handler.removeCallbacks(refreshRunnable) // Arrêter le rafraîchissement
+    }
+
+    private fun refreshConnectionStatus() {
+        val isNetworkAvailable = isNetworkAvailable()
+
+        handler.post {
+            if (isNetworkAvailable) {
+                buttonOk.visibility = View.VISIBLE
+                buttonOk.isEnabled = true
+                Log.i("PMR", "[NETWORK] connection successful")
+                IndicatoOffline.visibility = View.INVISIBLE
+                IndicatoOnline.visibility = View.VISIBLE
+            } else {
+                IndicatoOnline.visibility = View.INVISIBLE
+                IndicatoOffline.visibility = View.VISIBLE
+                buttonOk.visibility = View.GONE
+            }
+        }
+    }
+    private fun startConnectionRefreshing() {
+        // Démarrer le rafraîchissement toutes les 5 secondes
+        handler.postDelayed(refreshRunnable, 5000)
     }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -373,17 +309,6 @@ class MainActivity : BaseActivity() {
         editor.apply()
     }
 
-    // Récupérer le hash depuis les préférences partagées
-    fun getHashFromSharedPref(): String {
-        val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        if (sharedPreferences.contains("hashCode")){
-            val gson = Gson()
-            val json = sharedPreferences.getString("hashCode", "")
-            val type = object : TypeToken<String>() {}.type
-            return (gson.fromJson(json, type) )
-        }
-        else return ""
-    }
 
     //Sauvegarder les users dans les preferences partagées
     fun saveUsersToSharedPref(usersList:String) {
@@ -422,7 +347,6 @@ class MainActivity : BaseActivity() {
             Response.Listener<String> { response ->
                 // Convertir la chaîne de caractères JSON en un objet JSON
                 val jsonResponse = JSONObject(response)
-
                 // Récupérer le hash du JSON
                 val users = jsonResponse.getString("users")
                 Log.i("Volley", "Appel des users réussie : $users")
